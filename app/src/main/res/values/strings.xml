@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">LanLoc</string>
+    <string name="most_popular_name"></string>
+    <string name="newest_name"></string>
+    <string name="map_name"></string>
 </resources>

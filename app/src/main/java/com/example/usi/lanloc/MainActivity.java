@@ -1,9 +1,14 @@
 package com.example.usi.lanloc;
 
 import android.annotation.SuppressLint;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.provider.Settings.Secure;
+import android.view.View;
+import android.widget.TableLayout;
+import android.support.design.widget.TabLayout;
+
 import com.example.usi.lanloc.db.*;
 import com.orm.SugarApp;
 import com.orm.SugarDb;
@@ -11,6 +16,7 @@ import com.orm.SugarDb;
 import java.io.File;
 import java.sql.Blob;
 import java.util.List;
+import java.util.zip.Inflater;
 
 import static java.security.AccessController.getContext;
 
@@ -45,5 +51,11 @@ public class MainActivity extends AppCompatActivity {
 
         List<Position> positions = Position.listAll(Position.class);
         Position position = Position.findById(Position.class, 1L);
+
+        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPager.setAdapter(new CustomPagerAdapter(this));
+
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabDots);
+        tabLayout.setupWithViewPager(viewPager, true);
     }
 }
