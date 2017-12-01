@@ -10,8 +10,8 @@
         android:id="@+id/splashscreen"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:scaleType="centerCrop"
         android:layout_gravity="center"
+        android:scaleType="centerCrop"
         android:src="@drawable/welcome_screen" />
 
 </LinearLayout>
