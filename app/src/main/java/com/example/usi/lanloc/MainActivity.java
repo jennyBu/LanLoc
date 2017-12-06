@@ -14,6 +14,9 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     ImageView recordview;
+    CollectionPagerAdapter collectionPagerAdapter;
+    ViewPager viewPager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,8 +37,9 @@ public class MainActivity extends AppCompatActivity {
         //new DatabaseActivity().getRecordsForPositions(positions);
         //new DatabaseActivity().getPositionById(1);
 
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
-        viewPager.setAdapter(new CustomPagerAdapter(this));
+        collectionPagerAdapter = new CollectionPagerAdapter(getSupportFragmentManager());
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPager.setAdapter(collectionPagerAdapter);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabDots);
         tabLayout.setupWithViewPager(viewPager, true);
