@@ -93,6 +93,24 @@ public class DatabaseActivity extends AsyncTask {
 
     /**
      *
+     * @param id of the position
+     * @return latitude and longitude of the position
+     */
+    public Object getPositionById(Integer id) {
+        String positionId = id.toString();
+
+        try {
+            String data = URLEncoder.encode("method", "UTF-8") + "=" + URLEncoder.encode("getPositionById", "UTF-8");
+            data += "&" + URLEncoder.encode("id", "UTF-8") + "=" + URLEncoder.encode(positionId, "UTF-8");
+
+            return execute(data);
+        } catch (Exception e) {
+            return new String("Exception: " + e.getMessage());
+        }
+    }
+
+    /**
+     *
      * @param latitude of the current position
      * @param longitude of the current position
      * @param distance to the current position in meters

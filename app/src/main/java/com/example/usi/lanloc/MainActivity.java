@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
         //positions.add(2);
         //positions.add(5);
         //new DatabaseActivity().getRecordsForPositions(positions);
+        //new DatabaseActivity().getPositionById(1);
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
         viewPager.setAdapter(new CustomPagerAdapter(this));
