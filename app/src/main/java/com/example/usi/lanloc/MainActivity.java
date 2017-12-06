@@ -8,8 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.example.usi.lanloc.audio.RecordingActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -51,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //        Toast.makeText(MainActivity.this, "Recording",
                 //              Toast.LENGTH_LONG).show();
-                startActivity(new Intent(MainActivity.this, audio.class));
+                startActivity(new Intent(MainActivity.this, RecordingActivity.class));
 
             }
         });

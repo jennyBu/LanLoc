@@ -1,4 +1,4 @@
-package com.example.usi.lanloc;
+package com.example.usi.lanloc.db;
 
 import android.os.AsyncTask;
 import org.json.JSONArray;
@@ -165,7 +165,7 @@ public class DatabaseActivity extends AsyncTask {
      *
      * @param userId foreign key for user (id column in user table)
      * @param positionId foreign key for position (id column in positions table)
-     * @param path path to the audio file on file server
+     * @param path path to the RecordingActivity file on file server
      */
     public void addRecord(Integer userId, Integer positionId, String path) {
         String user = userId.toString();
@@ -175,7 +175,7 @@ public class DatabaseActivity extends AsyncTask {
             String data = URLEncoder.encode("method", "UTF-8") + "=" + URLEncoder.encode("addRecord", "UTF-8");
             data += "&" + URLEncoder.encode("user", "UTF-8") + "=" + URLEncoder.encode(user, "UTF-8");
             data += "&" + URLEncoder.encode("position", "UTF-8") + "=" + URLEncoder.encode(position, "UTF-8");
-            data += "&" + URLEncoder.encode("audio", "UTF-8") + "=" + URLEncoder.encode(path, "UTF-8");
+            data += "&" + URLEncoder.encode("RecordingActivity", "UTF-8") + "=" + URLEncoder.encode(path, "UTF-8");
 
             execute(data);
         } catch (Exception e) {

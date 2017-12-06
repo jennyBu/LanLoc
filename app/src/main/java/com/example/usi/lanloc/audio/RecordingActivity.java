@@ -1,4 +1,4 @@
-package com.example.usi.lanloc;
+package com.example.usi.lanloc.audio;
 
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
@@ -14,18 +14,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.Random;
 
 import static android.Manifest.permission.RECORD_AUDIO;
@@ -35,9 +31,9 @@ import android.support.v4.app.ActivityCompat;
 import android.content.pm.PackageManager;
 import android.support.v4.content.ContextCompat;
 
-import org.json.JSONArray;
+import com.example.usi.lanloc.R;
 
-public class audio extends AppCompatActivity {
+public class RecordingActivity extends AppCompatActivity {
 
     Button buttonStart, buttonStop, buttonPlayLastRecordAudio,
             buttonStopPlayingRecording ;
@@ -94,7 +90,7 @@ public class audio extends AppCompatActivity {
                     buttonStart.setEnabled(false);
                     buttonStop.setEnabled(true);
 
-                    Toast.makeText(audio.this, "Recording started",
+                    Toast.makeText(RecordingActivity.this, "Recording started",
                             Toast.LENGTH_LONG).show();
                 } else {
                     requestPermission();
@@ -114,7 +110,7 @@ public class audio extends AppCompatActivity {
                 buttonStart.setEnabled(true);
                 buttonStopPlayingRecording.setEnabled(false);
 
-                Toast.makeText(audio.this, "Recording Completed",
+                Toast.makeText(RecordingActivity.this, "Recording Completed",
                         Toast.LENGTH_LONG).show();
 
                 new doFileUpload().execute();
@@ -141,7 +137,7 @@ public class audio extends AppCompatActivity {
                 }
 
                 mediaPlayer.start();
-                Toast.makeText(audio.this, "Recording Playing",
+                Toast.makeText(RecordingActivity.this, "Recording Playing",
                         Toast.LENGTH_LONG).show();
             }
         });
@@ -181,7 +177,7 @@ public class audio extends AppCompatActivity {
             byte[] buffer;
             int maxBufferSize = 1 * 1024 * 1024;
             String responseFromServer = "";
-            String urlString = "http://uc-edu.mobile.usilu.net/audio.php";
+            String urlString = "http://uc-edu.mobile.usilu.net/RecordingActivity.php";
 
             try {
 
@@ -280,7 +276,7 @@ public class audio extends AppCompatActivity {
     }
 
     private void requestPermission() {
-        ActivityCompat.requestPermissions(audio.this, new
+        ActivityCompat.requestPermissions(RecordingActivity.this, new
                 String[]{WRITE_EXTERNAL_STORAGE, RECORD_AUDIO}, RequestPermissionCode);
     }
 
@@ -296,10 +292,10 @@ public class audio extends AppCompatActivity {
                             PackageManager.PERMISSION_GRANTED;
 
                     if (StoragePermission && RecordPermission) {
-                        Toast.makeText(audio.this, "Permission Granted",
+                        Toast.makeText(RecordingActivity.this, "Permission Granted",
                                 Toast.LENGTH_LONG).show();
                     } else {
-                        Toast.makeText(audio.this,"Permission Denied",Toast.LENGTH_LONG).show();
+                        Toast.makeText(RecordingActivity.this,"Permission Denied",Toast.LENGTH_LONG).show();
                     }
                 }
                 break;

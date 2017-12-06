@@ -4,6 +4,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
+import com.example.usi.lanloc.map.MapFragment;
+
 public class CollectionPagerAdapter extends FragmentStatePagerAdapter {
     public CollectionPagerAdapter(FragmentManager fm) {
         super(fm);
