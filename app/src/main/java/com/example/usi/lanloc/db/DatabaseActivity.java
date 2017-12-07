@@ -13,7 +13,17 @@ import java.util.List;
 /**
  * Created by Jennifer Busta on 01.12.17.
  */
-public class DatabaseActivity extends AsyncTask {
+public class DatabaseActivity extends AsyncTask<Object, Object, Object> {
+    public AsyncResponse delegate = null;
+
+    public DatabaseActivity(AsyncResponse asyncResponse) {
+        delegate = asyncResponse;
+    }
+
+    @Override
+    protected void onPostExecute(Object result) {
+        delegate.processFinish(result);
+    }
 
     @Override
     protected Object doInBackground(Object[] objects) {
@@ -40,15 +50,6 @@ public class DatabaseActivity extends AsyncTask {
             }
 
             return new JSONArray(line);
-            /*JSONArray jsonarray = new JSONArray(line);
-            for (int i = 0; i < jsonarray.length(); i++) {
-                JSONObject jsonobject = jsonarray.getJSONObject(i);
-                String android_id = jsonobject.getString("android_id");
-            }
-
-            return sb.toString();
-
-            */
         } catch (Exception e) {
             return new String("Exception: " + e.getMessage());
         }
