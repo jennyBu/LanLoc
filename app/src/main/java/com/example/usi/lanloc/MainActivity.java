@@ -6,9 +6,13 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.example.usi.lanloc.audio.RecordingActivity;
+import com.example.usi.lanloc.audio.RecordingActivity2;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,7 +32,28 @@ public class MainActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabDots);
         tabLayout.setupWithViewPager(viewPager, true);
 
-        recordview = (ImageView) findViewById(R.id.record_icon);
+
+
+        ToggleButton toggle = (ToggleButton) findViewById(R.id.toggle);
+        toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    Toast.makeText(MainActivity.this, "Start recording",
+                            Toast.LENGTH_LONG).show();
+
+                    // The toggle is enabled
+                } else {
+                    Toast.makeText(MainActivity.this, "Stop recording",
+                            Toast.LENGTH_LONG).show();
+
+                    startActivity(new Intent(MainActivity.this, RecordingActivity2.class));
+                    // The toggle is disabled
+                }
+            }
+        });
+
+
+      /*  recordview = (ImageView) findViewById(R.id.record_icon);
 
         recordview.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -38,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, RecordingActivity.class));
 
             }
-        });
+        });  */
 
         /*final ImageView bubble = (ImageView) findViewById(R.id.bubble_icon);
         final ImageView user = (ImageView) findViewById(R.id.user_icon);

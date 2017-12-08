@@ -1,5 +1,6 @@
 package com.example.usi.lanloc.audio;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
@@ -12,8 +13,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.usi.lanloc.MainActivity;
 import com.example.usi.lanloc.R;
 
 import java.io.DataInputStream;
@@ -28,11 +31,12 @@ import java.util.Random;
 
 import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static com.example.usi.lanloc.audio.RecordingActivity2.RequestPermissionCode;
 
 public class RecordingActivity2 extends AppCompatActivity {
 
-    Button buttonStart, buttonStop, buttonPlayLastRecordAudio,
-            buttonStopPlayingRecording ;
+    //  Button buttonStart, buttonStop, buttonPlayLastRecordAudio,
+//            buttonStopPlayingRecording ;
     String AudioSavePathInDevice = null;
     String AudioSavePathInDevice1 = null;
     MediaRecorder mediaRecorder ;
@@ -40,122 +44,64 @@ public class RecordingActivity2 extends AppCompatActivity {
     String RandomAudioFileName = "ABCDEFGHIJKLMNOP";
     public static final int RequestPermissionCode = 1;
     MediaPlayer mediaPlayer ;
+    ImageView recordview;
+    ImageView playview;
+    ImageView pauseview;
+    ImageView uploadview;
+    ImageView backview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.audio);
+        setContentView(R.layout.audio2);
 
-        buttonStart = (Button) findViewById(R.id.button);
-        buttonStop = (Button) findViewById(R.id.button2);
-        buttonPlayLastRecordAudio = (Button) findViewById(R.id.button3);
-        buttonStopPlayingRecording = (Button)findViewById(R.id.button4);
 
-        buttonStop.setEnabled(false);
-        buttonPlayLastRecordAudio.setEnabled(false);
-        buttonStopPlayingRecording.setEnabled(false);
+        recordview = (ImageView) findViewById(R.id.record_icon);
+        pauseview = (ImageView) findViewById(R.id.pause_icon);
+        playview = (ImageView) findViewById(R.id.play_icon);
+        backview = (ImageView) findViewById(R.id.back_icon);
+        uploadview = (ImageView) findViewById(R.id.upload_icon);
 
-        random = new Random();
-
-        buttonStart.setOnClickListener(new View.OnClickListener() {
+        backview.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-
-                if(checkPermission()) {
-
-                    AudioSavePathInDevice1 = CreateRandomAudioFileName(5) + "AudioRecording.3gp";
-
-
-                    AudioSavePathInDevice =
-                            Environment.getExternalStorageDirectory().getAbsolutePath() + "/" +
-                                    AudioSavePathInDevice1;
-
-                    MediaRecorderReady();
-
-                    try {
-                        mediaRecorder.prepare();
-                        mediaRecorder.start();
-                    } catch (IllegalStateException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-
-                    buttonStart.setEnabled(false);
-                    buttonStop.setEnabled(true);
-
-                    Toast.makeText(RecordingActivity2.this, "Recording started",
-                            Toast.LENGTH_LONG).show();
-                } else {
-                    requestPermission();
-                }
+            public void onClick(View v) {
+                //        Toast.makeText(MainActivity.this, "Recording",
+                //              Toast.LENGTH_LONG).show();
+//                startActivity(new Intent(MainActivity.this, RecordingActivity.class));
+                startActivity(new Intent(RecordingActivity2.this, MainActivity.class));
 
             }
         });
 
 
 
-        buttonStop.setOnClickListener(new View.OnClickListener() {
+        recordview.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                mediaRecorder.stop();
-                buttonStop.setEnabled(false);
-                buttonPlayLastRecordAudio.setEnabled(true);
-                buttonStart.setEnabled(true);
-                buttonStopPlayingRecording.setEnabled(false);
-
-                Toast.makeText(RecordingActivity2.this, "Recording Completed",
-                        Toast.LENGTH_LONG).show();
-
-                new doFileUpload().execute();
-               // new doFileUpload(AudioSavePathInDevice).execute();
+            public void onClick(View v) {
+                //        Toast.makeText(MainActivity.this, "Recording",
+                //              Toast.LENGTH_LONG).show();
+//                startActivity(new Intent(MainActivity.this, RecordingActivity.class));
+                startActivity(new Intent(RecordingActivity2.this, RecordingActivity2.class));
 
             }
         });
 
-        buttonPlayLastRecordAudio.setOnClickListener(new View.OnClickListener() {
+
+        pauseview = (ImageView) findViewById(R.id.pause_icon);
+
+        pauseview.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) throws IllegalArgumentException,
-                    SecurityException, IllegalStateException {
+            public void onClick(View v) {
+                //        Toast.makeText(MainActivity.this, "Recording",
+                //              Toast.LENGTH_LONG).show();
+//                startActivity(new Intent(MainActivity.this, RecordingActivity.class));
+                startActivity(new Intent(RecordingActivity2.this, RecordingActivity2.class));
 
-                buttonStop.setEnabled(false);
-                buttonStart.setEnabled(false);
-                buttonStopPlayingRecording.setEnabled(true);
-
-                mediaPlayer = new MediaPlayer();
-                try {
-                    mediaPlayer.setDataSource(AudioSavePathInDevice);
-                    mediaPlayer.prepare();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                mediaPlayer.start();
-                Toast.makeText(RecordingActivity2.this, "Recording Playing",
-                        Toast.LENGTH_LONG).show();
             }
         });
 
-        buttonStopPlayingRecording.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                buttonStop.setEnabled(false);
-                buttonStart.setEnabled(true);
-                buttonStopPlayingRecording.setEnabled(false);
-                buttonPlayLastRecordAudio.setEnabled(true);
-
-                if(mediaPlayer != null){
-                    mediaPlayer.stop();
-                    mediaPlayer.release();
-                    MediaRecorderReady();
-                }
-            }
-        });
 
     }
-
 
     public class doFileUpload extends AsyncTask<Void, Void, Void> {
 

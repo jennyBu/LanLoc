@@ -32,6 +32,23 @@
         android:layout_alignParentRight="true"
         android:layout_marginRight="80px"
         android:src="@drawable/user_grey" />
+
+    <ToggleButton
+        android:id="@+id/toggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/record_icon"
+        android:layout_alignEnd="@+id/record_icon"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/record_icon"
+        android:background="@drawable/check"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:textOff=""
+        android:textOn="" />
+
+
+
 </RelativeLayout>
 
 
