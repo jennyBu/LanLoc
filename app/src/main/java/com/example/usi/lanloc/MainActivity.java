@@ -39,5 +39,32 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        /*final ImageView bubble = (ImageView) findViewById(R.id.bubble_icon);
+        final ImageView user = (ImageView) findViewById(R.id.user_icon);
+
+        bubble.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (bubble.getDrawable().equals(R.drawable.bubble_blue)) {
+                    bubble.setImageResource(R.drawable.bubble_grey);
+                    user.setImageResource(R.drawable.user_blue);
+                }
+                bubble.setImageResource(R.drawable.bubble_blue);
+                user.setImageResource(R.drawable.user_grey);
+            }
+        });
+
+        user.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (user.getDrawable().equals(R.drawable.user_grey)) {
+                    bubble.setImageResource(R.drawable.bubble_grey);
+                    user.setImageResource(R.drawable.user_blue);
+                }
+                bubble.setImageResource(R.drawable.bubble_blue);
+                user.setImageResource(R.drawable.user_grey);
+            }
+        });*/
     }
 }

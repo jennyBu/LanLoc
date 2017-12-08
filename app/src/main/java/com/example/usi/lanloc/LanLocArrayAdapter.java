@@ -58,9 +58,47 @@ public class LanLocArrayAdapter extends ArrayAdapter<JSONObject> {
         return rowView;
     }
 
-    private void handleAudio(JSONObject value) throws JSONException {
-        String path = value.getString("audio");
-        // TODO on click listener + possibility to play back
+    private void handleDownVotes(final JSONObject value, View rowView, final Integer id) throws JSONException {
+        final String downVotes = value.getString("down_votes");
+        final TextView downVoteTextView = (TextView) rowView.findViewById(R.id.downVotes);
+        downVoteTextView.setText(downVotes);
+
+        ImageView downVoteImageView = (ImageView) rowView.findViewById(R.id.iconDownVotes);
+        downVoteImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Integer downVotesCount = Integer.parseInt(downVotes);
+                downVotesCount++;
+                downVoteTextView.setText(downVotesCount.toString());
+
+                DatabaseActivity asyncTask = new DatabaseActivity(new AsyncResponse() {
+                    @Override
+                    public void processFinish(Object output) { }
+                });
+                asyncTask.voteRecordDown(id);
+            }
+        });
+    }
+
+    private void handleUpVotes(JSONObject value, View rowView, final Integer id) throws JSONException {
+        final String upVotes = value.getString("up_votes");
+        final TextView upVoteTextView = (TextView) rowView.findViewById(R.id.upVotes);
+        upVoteTextView.setText(upVotes);
+        ImageView upVoteImageView = (ImageView) rowView.findViewById(R.id.iconUpVotes);
+        upVoteImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Integer upVotesCount = Integer.parseInt(upVotes);
+                upVotesCount++;
+                upVoteTextView.setText(upVotesCount.toString());
+
+                DatabaseActivity asyncTask = new DatabaseActivity(new AsyncResponse() {
+                    @Override
+                    public void processFinish(Object output) { }
+                });
+                asyncTask.voteRecordUp(id);
+            }
+        });
     }
 
     private void handleDateTime(JSONObject value, View rowView) throws JSONException {
@@ -139,46 +177,8 @@ public class LanLocArrayAdapter extends ArrayAdapter<JSONObject> {
         return "now";
     }
 
-    private void handleDownVotes(final JSONObject value, View rowView, final Integer id) throws JSONException {
-        final String downVotes = value.getString("down_votes");
-        final TextView downVoteTextView = (TextView) rowView.findViewById(R.id.downVotes);
-        downVoteTextView.setText(downVotes);
-
-        ImageView downVoteImageView = (ImageView) rowView.findViewById(R.id.iconDownVotes);
-        downVoteImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Integer downVotesCount = Integer.parseInt(downVotes);
-                downVotesCount++;
-                downVoteTextView.setText(downVotesCount.toString());
-
-                DatabaseActivity asyncTask = new DatabaseActivity(new AsyncResponse() {
-                    @Override
-                    public void processFinish(Object output) { }
-                });
-                asyncTask.voteRecordDown(id);
-            }
-        });
-    }
-
-    private void handleUpVotes(JSONObject value, View rowView, final Integer id) throws JSONException {
-        final String upVotes = value.getString("up_votes");
-        final TextView upVoteTextView = (TextView) rowView.findViewById(R.id.upVotes);
-        upVoteTextView.setText(upVotes);
-        ImageView upVoteImageView = (ImageView) rowView.findViewById(R.id.iconUpVotes);
-        upVoteImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Integer upVotesCount = Integer.parseInt(upVotes);
-                upVotesCount++;
-                upVoteTextView.setText(upVotesCount.toString());
-
-                DatabaseActivity asyncTask = new DatabaseActivity(new AsyncResponse() {
-                    @Override
-                    public void processFinish(Object output) { }
-                });
-                asyncTask.voteRecordUp(id);
-            }
-        });
+    private void handleAudio(JSONObject value) throws JSONException {
+        String path = value.getString("audio");
+        // TODO on click listener + possibility to play back
     }
 }

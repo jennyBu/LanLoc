@@ -5,7 +5,6 @@ import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 
 import com.example.usi.lanloc.db.AsyncResponse;
 import com.example.usi.lanloc.db.DatabaseActivity;
@@ -15,8 +14,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -25,7 +22,6 @@ import java.util.List;
 
 public class MostPopularFragment extends ListFragment {
 
-    String data[] = new String[] { "one", "two", "three", "four" };
     public LanLocArrayAdapter mAdapter;
 
     public MostPopularFragment() {
