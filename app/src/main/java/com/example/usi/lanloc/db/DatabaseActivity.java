@@ -136,6 +136,32 @@ public class DatabaseActivity extends AsyncTask<Object, Object, Object> {
 
     /**
      *
+     * @param latitude of the current position
+     * @param longitude of the current position
+     * @param distance to the current position in meters
+     * @param order in which the results are sorted (type "default" for sorting by popularity and "date" for sorting by date)
+     * @return all records in the range of the distance around the current position
+     */
+    public Object getRecordsAroundPosition(Double latitude, Double longitude, Integer distance, String order) {
+        String lat = Double.toString(latitude);
+        String lon = Double.toString(longitude);
+        String dist = distance.toString();
+
+        try {
+            String data = URLEncoder.encode("method", "UTF-8") + "=" + URLEncoder.encode("getRecordsAroundPosition", "UTF-8");
+            data += "&" + URLEncoder.encode("latitude", "UTF-8") + "=" + URLEncoder.encode(lat, "UTF-8");
+            data += "&" + URLEncoder.encode("longitude", "UTF-8") + "=" + URLEncoder.encode(lon, "UTF-8");
+            data += "&" + URLEncoder.encode("distance", "UTF-8") + "=" + URLEncoder.encode(dist, "UTF-8");
+            data += "&" + URLEncoder.encode("order", "UTF-8") + "=" + URLEncoder.encode(order, "UTF-8");
+
+            return execute(data);
+        } catch (Exception e) {
+            return new String("Exception: " + e.getMessage());
+        }
+    }
+
+    /**
+     *
      * @param positions that are searched for
      * @return records for all mentioned positions
      */

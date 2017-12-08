@@ -3,6 +3,27 @@
     android:layout_height="?android:attr/listPreferredItemHeightLarge"
     android:padding="6dip" >
 
+    <!-- Down votes -->
+    <ImageView
+        android:id="@+id/iconDownVotes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dip"
+        android:src="@drawable/ic_down_vote"/>
+
+    <TextView
+        android:id="@+id/downVotes"
+        android:layout_width="0dp"
+        android:layout_height="26dip"
+        android:layout_alignLeft="@+id/iconDownVotes"
+        android:layout_alignRight="@+id/iconDownVotes"
+        android:layout_below="@+id/iconDownVotes"
+        android:maxLines="1"
+        android:text="0"
+        android:textAlignment="center"
+        android:textSize="15sp" />
+
+    <!-- Audio -->
     <ImageView
         android:id="@+id/icon"
         android:layout_width="wrap_content"
@@ -23,19 +44,28 @@
         android:layout_gravity="center"
         android:layout_centerHorizontal="true"
         android:textAlignment="center"
-        android:textSize="12sp" />
+        android:textSize="15sp" />
 
-    <!--TextView
-        android:id="@+id/firstLine"
-        android:layout_width="fill_parent"
+    <!-- Up votes -->
+    <ImageView
+        android:id="@+id/iconUpVotes"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@id/secondLine"
+        android:layout_marginRight="10dip"
+        android:layout_gravity="right"
         android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignWithParentIfMissing="true"
-        android:layout_toRightOf="@id/icon"
-        android:gravity="center_vertical"
-        android:text="Example application"
-        android:textSize="16sp" /-->
+        android:src="@drawable/ic_up_vote" />
+
+    <TextView
+        android:id="@+id/upVotes"
+        android:layout_width="0dp"
+        android:layout_height="26dip"
+        android:layout_alignLeft="@+id/iconUpVotes"
+        android:layout_alignRight="@+id/iconUpVotes"
+        android:layout_below="@+id/iconUpVotes"
+        android:maxLines="1"
+        android:text="0"
+        android:textAlignment="center"
+        android:textSize="15sp" />
 
 </RelativeLayout>

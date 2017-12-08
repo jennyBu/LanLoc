@@ -15,6 +15,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -60,8 +62,10 @@ public class MostPopularFragment extends ListFragment {
             }
         });
 
-        asyncTask.getRecordsForPositions(positions);
+        // TODO pass here real position values
+        asyncTask.getRecordsAroundPosition(46.010475, 8.957006, 1000, "default");
 
         return fragView;
     }
+
 }
