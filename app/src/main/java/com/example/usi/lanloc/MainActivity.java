@@ -1,8 +1,14 @@
 package com.example.usi.lanloc;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -14,16 +20,37 @@ import android.widget.ToggleButton;
 import com.example.usi.lanloc.audio.RecordingActivity;
 import com.example.usi.lanloc.audio.RecordingActivity2;
 
+import java.io.IOException;
+import java.util.Random;
+
+import static android.Manifest.permission.RECORD_AUDIO;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+
 public class MainActivity extends AppCompatActivity {
 
     ImageView recordview;
     CollectionPagerAdapter collectionPagerAdapter;
     ViewPager viewPager;
 
+
+    public String AudioSavePathInDevice = null;
+    public String AudioSavePathInDevice1 = null;
+    MediaRecorder mediaRecorder ;
+    Random random ;
+    String RandomAudioFileName = "ABCDEFGHIJKLMNOP";
+    public static final int RequestPermissionCode = 1;
+    MediaPlayer mediaPlayer ;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        random = new Random();
+
 
         collectionPagerAdapter = new CollectionPagerAdapter(getSupportFragmentManager());
         viewPager = (ViewPager) findViewById(R.id.viewpager);
@@ -38,19 +65,59 @@ public class MainActivity extends AppCompatActivity {
         toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    Toast.makeText(MainActivity.this, "Start recording",
-                            Toast.LENGTH_LONG).show();
+
+
+                    if(checkPermission()) {
+
+                        AudioSavePathInDevice1 = CreateRandomAudioFileName(5) + "AudioRecording.3gp";
+
+
+                        AudioSavePathInDevice =
+                                Environment.getExternalStorageDirectory().getAbsolutePath() + "/" +
+                                        AudioSavePathInDevice1;
+
+                        MediaRecorderReady();
+
+                        try {
+                            mediaRecorder.prepare();
+                            mediaRecorder.start();
+                        } catch (IllegalStateException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+
+                        Toast.makeText(MainActivity.this, "Start recording",
+                                Toast.LENGTH_LONG).show();
+
+
+                    } else {
+                        requestPermission();
+                    }
+
+
 
                     // The toggle is enabled
                 } else {
                     Toast.makeText(MainActivity.this, "Stop recording",
                             Toast.LENGTH_LONG).show();
 
-                    startActivity(new Intent(MainActivity.this, RecordingActivity2.class));
+                    mediaRecorder.stop();
+
+                    Intent RecordingActivity2 = new Intent(MainActivity.this, RecordingActivity2.class);
+                    RecordingActivity2.putExtra("AudioSavePathInDevice", AudioSavePathInDevice);
+                    RecordingActivity2.putExtra("AudioSavePathInDevice1", AudioSavePathInDevice1);
+
+                    //     startActivity(new Intent(MainActivity.this, RecordingActivity2.class));
+                    startActivity(RecordingActivity2);
                     // The toggle is disabled
                 }
             }
         });
+
+
 
 
       /*  recordview = (ImageView) findViewById(R.id.record_icon);
@@ -91,5 +158,62 @@ public class MainActivity extends AppCompatActivity {
                 user.setImageResource(R.drawable.user_grey);
             }
         });*/
+    }
+
+
+    public void MediaRecorderReady(){
+        mediaRecorder=new MediaRecorder();
+        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        mediaRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
+        mediaRecorder.setOutputFile(AudioSavePathInDevice);
+    }
+
+    public String CreateRandomAudioFileName(int string){
+        StringBuilder stringBuilder = new StringBuilder( string );
+        int i = 0 ;
+        while(i < string ) {
+            stringBuilder.append(RandomAudioFileName.
+                    charAt(random.nextInt(RandomAudioFileName.length())));
+
+            i++ ;
+        }
+        return stringBuilder.toString();
+    }
+
+    private void requestPermission() {
+        ActivityCompat.requestPermissions(MainActivity.this, new
+                String[]{WRITE_EXTERNAL_STORAGE, RECORD_AUDIO}, RequestPermissionCode);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case RequestPermissionCode:
+                if (grantResults.length> 0) {
+                    boolean StoragePermission = grantResults[0] ==
+                            PackageManager.PERMISSION_GRANTED;
+                    boolean RecordPermission = grantResults[1] ==
+                            PackageManager.PERMISSION_GRANTED;
+
+                    if (StoragePermission && RecordPermission) {
+                        Toast.makeText(MainActivity.this, "Permission Granted",
+                                Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(MainActivity.this,"Permission Denied",Toast.LENGTH_LONG).show();
+                    }
+                }
+                break;
+        }
+    }
+
+    public boolean checkPermission() {
+        int result = ContextCompat.checkSelfPermission(getApplicationContext(),
+                WRITE_EXTERNAL_STORAGE);
+        int result1 = ContextCompat.checkSelfPermission(getApplicationContext(),
+                RECORD_AUDIO);
+        return result == PackageManager.PERMISSION_GRANTED &&
+                result1 == PackageManager.PERMISSION_GRANTED;
     }
 }

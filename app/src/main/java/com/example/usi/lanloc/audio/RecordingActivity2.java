@@ -13,8 +13,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.example.usi.lanloc.MainActivity;
 import com.example.usi.lanloc.R;
@@ -33,6 +35,8 @@ import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static com.example.usi.lanloc.audio.RecordingActivity2.RequestPermissionCode;
 
+
+
 public class RecordingActivity2 extends AppCompatActivity {
 
     //  Button buttonStart, buttonStop, buttonPlayLastRecordAudio,
@@ -44,6 +48,7 @@ public class RecordingActivity2 extends AppCompatActivity {
     String RandomAudioFileName = "ABCDEFGHIJKLMNOP";
     public static final int RequestPermissionCode = 1;
     MediaPlayer mediaPlayer ;
+
     ImageView recordview;
     ImageView playview;
     ImageView pauseview;
@@ -55,6 +60,12 @@ public class RecordingActivity2 extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.audio2);
 
+
+        if( getIntent().getExtras() != null)
+        {
+            AudioSavePathInDevice = getIntent().getStringExtra("AudioSavePathInDevice");
+            AudioSavePathInDevice1 = getIntent().getStringExtra("AudioSavePathInDevice1");
+        }
 
         recordview = (ImageView) findViewById(R.id.record_icon);
         pauseview = (ImageView) findViewById(R.id.pause_icon);
@@ -74,6 +85,25 @@ public class RecordingActivity2 extends AppCompatActivity {
         });
 
 
+        ToggleButton toggle = (ToggleButton) findViewById(R.id.toggle);
+        toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    Toast.makeText(RecordingActivity2.this, "Start recording",
+                            Toast.LENGTH_LONG).show();
+
+
+                    // The toggle is enabled
+                } else {
+                    Toast.makeText(RecordingActivity2.this, "Stop recording",
+                            Toast.LENGTH_LONG).show();
+
+                    startActivity(new Intent(RecordingActivity2.this, RecordingActivity2.class));
+                    // The toggle is disabled
+                }
+            }
+        });
+
 
         recordview.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,29 +111,71 @@ public class RecordingActivity2 extends AppCompatActivity {
                 //        Toast.makeText(MainActivity.this, "Recording",
                 //              Toast.LENGTH_LONG).show();
 //                startActivity(new Intent(MainActivity.this, RecordingActivity.class));
-                startActivity(new Intent(RecordingActivity2.this, RecordingActivity2.class));
+         //       startActivity(new Intent(RecordingActivity2.this, RecordingActivity2.class));
+                if(checkPermission()) {
+
+                    AudioSavePathInDevice1 = CreateRandomAudioFileName(5) + "AudioRecording.3gp";
+
+                    AudioSavePathInDevice =
+                            Environment.getExternalStorageDirectory().getAbsolutePath() + "/" +
+                                    AudioSavePathInDevice1;
+
+                    MediaRecorderReady();
+
+                    try {
+                        mediaRecorder.prepare();
+                        mediaRecorder.start();
+                    } catch (IllegalStateException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+
+
+                    Toast.makeText(RecordingActivity2.this, "Recording started",
+                            Toast.LENGTH_LONG).show();
+                } else {
+                    requestPermission();
+                }
+
+
+
+
 
             }
         });
 
 
-        pauseview = (ImageView) findViewById(R.id.pause_icon);
-
-        pauseview.setOnClickListener(new View.OnClickListener() {
+        playview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //        Toast.makeText(MainActivity.this, "Recording",
-                //              Toast.LENGTH_LONG).show();
-//                startActivity(new Intent(MainActivity.this, RecordingActivity.class));
-                startActivity(new Intent(RecordingActivity2.this, RecordingActivity2.class));
+                mediaPlayer = new MediaPlayer();
+                try {
+                    mediaPlayer.setDataSource(AudioSavePathInDevice);
+                    mediaPlayer.prepare();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                mediaPlayer.start();
+                Toast.makeText(RecordingActivity2.this, "Recording Playing",
+                        Toast.LENGTH_LONG).show();
 
             }
         });
+
 
 
     }
 
-    public class doFileUpload extends AsyncTask<Void, Void, Void> {
+
+
+
+
+
+ /*   public class doFileUpload extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected Void doInBackground(Void... params) {
@@ -193,7 +265,7 @@ public class RecordingActivity2 extends AppCompatActivity {
             }
             return null;
         }
-    }
+    }  */
 
 
 
