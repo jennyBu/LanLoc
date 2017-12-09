@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
 
     public String AudioSavePathInDevice = null;
     public String AudioSavePathInDevice1 = null;
+
     MediaRecorder mediaRecorder ;
     Random random ;
     String RandomAudioFileName = "ABCDEFGHIJKLMNOP";
