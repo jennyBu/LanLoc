@@ -21,11 +21,16 @@ import android.widget.ToggleButton;
 import com.example.usi.lanloc.MainActivity;
 import com.example.usi.lanloc.R;
 
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -93,7 +98,7 @@ public class RecordingActivity2 extends AppCompatActivity {
                 //              Toast.LENGTH_LONG).show();
 //                startActivity(new Intent(MainActivity.this, RecordingActivity.class));
                 doFileUpload();
-
+              //  new UploadFileAsync().execute("");
             }
         });
 
@@ -394,7 +399,11 @@ public class RecordingActivity2 extends AppCompatActivity {
                 //private void doFileUpload(){
                 HttpURLConnection conn = null;
                 DataOutputStream dos = null;
-                DataInputStream inStream = null;
+                //DataInputStream inStream = null;
+                BufferedReader inStream = null;
+
+
+
                 String lineEnd = "rn";
                 String twoHyphens = "--";
                 String boundary = "*****";
@@ -403,7 +412,7 @@ public class RecordingActivity2 extends AppCompatActivity {
                 int maxBufferSize = 1 * 1024 * 1024;
                 String responseFromServer = "";
                 Log.d("function", "this is the value of selected path" + AudioSavePathInDevice);
-                String urlString = "http://uc-edu.mobile.usilu.net/audio2.php";
+                String urlString = "http://uc-edu.mobile.usilu.net/audio3.php";
                 try {
                     //------------------ CLIENT REQUEST
                     FileInputStream fileInputStream = new FileInputStream(new File(AudioSavePathInDevice));
@@ -421,9 +430,12 @@ public class RecordingActivity2 extends AppCompatActivity {
                     conn.setRequestMethod("POST");
                     conn.setRequestProperty("Connection", "Keep-Alive");
                     conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+                    conn.setRequestProperty("uploadedfile",AudioSavePathInDevice1);
+
+
                     dos = new DataOutputStream(conn.getOutputStream());
                     dos.writeBytes(twoHyphens + boundary + lineEnd);
-                    dos.writeBytes("Content-Disposition: form-data; name=\"uploadedfile\";filename=\"" + AudioSavePathInDevice + "" + lineEnd);
+                    dos.writeBytes("Content-Disposition: form-data; name=\"uploadedfile\";filename=\"" + AudioSavePathInDevice1 + "\"" + lineEnd);
 
                     //dos.writeBytes("Content-Disposition: form-data; name="uploadedfile";filename="" + selectedPath + """ + lineEnd);
                     dos.writeBytes(lineEnd);
@@ -444,27 +456,67 @@ public class RecordingActivity2 extends AppCompatActivity {
                     dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
                     // close streams
                     Log.e("Debug", "File is written");
+                    Log.e("Debug",AudioSavePathInDevice1 );
                     fileInputStream.close();
                     dos.flush();
                     dos.close();
+
+                    int serverResponseCode = conn.getResponseCode();
+                    String serverResponseMessage = conn.getResponseMessage().toString();
+                    Log.i("joshtag", "HTTP Response is : "  + serverResponseMessage + ": " +  serverResponseCode);
+
                 } catch (MalformedURLException ex) {
                     Log.e("Debug", "error: " + ex.getMessage(), ex);
                 } catch (IOException ioe) {
                     Log.e("Debug", "error: " + ioe.getMessage(), ioe);
                 }
                 //------------------ read the SERVER RESPONSE
-                try {
-                    inStream = new DataInputStream(conn.getInputStream());
+
+
+           /*     try {
+
+                //    inStream = new BufferedReader(conn.getInputStream());
+                //    BufferedReader inStream = new BufferedReader(conn.getInputStream());
+                 //    inStream = new DataInputStream(conn.getInputStream());
                     String str;
 
                     while ((str = inStream.readLine()) != null) {
-                        Log.e("Debug", "Server Response " + str);
+                  //     while ((str = BufferedReader.readLine()) != null) {
+                    Log.e("Debug", "Server Response " + str);
                     }
                     inStream.close();
 
                 } catch (IOException ioex) {
                     Log.e("Debug", "error: " + ioex.getMessage(), ioex);
+                }*/
+
+
+
+
+                try{
+                    String inputLine;
+                    inStream = new BufferedReader(new FileReader(AudioSavePathInDevice));
+                    while ((inputLine = inStream.readLine()) != null) {
+                        System.out.println(inputLine);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    try {
+                        if (inStream != null) {
+                            inStream.close();
+                        }
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+
                 }
+
+
+
+
+
+
                 return null;
             }
 
@@ -475,6 +527,140 @@ public class RecordingActivity2 extends AppCompatActivity {
         }.execute();
 
     }
+
+
+ /*   private class UploadFileAsync extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            try {
+                String sourceFileUri = AudioSavePathInDevice;
+                int serverResponseCode = 0;
+                HttpURLConnection conn = null;
+                DataOutputStream dos = null;
+                String lineEnd = "\r\n";
+                String twoHyphens = "--";
+                String boundary = "*****";
+                int bytesRead, bytesAvailable, bufferSize;
+                byte[] buffer;
+                int maxBufferSize = 1 * 1024 * 1024;
+                File sourceFile = new File(sourceFileUri);
+
+                if (sourceFile.isFile()) {
+
+                    try {
+                        String upLoadServerUri = "http://uc-edu.mobile.usilu.net/audio4.php";
+
+                        // open a URL connection to the Servlet
+                        FileInputStream fileInputStream = new FileInputStream(
+                                sourceFile);
+                        URL url = new URL(upLoadServerUri);
+
+                        // Open a HTTP connection to the URL
+                        conn = (HttpURLConnection) url.openConnection();
+                        conn.setDoInput(true); // Allow Inputs
+                        conn.setDoOutput(true); // Allow Outputs
+                        conn.setUseCaches(false); // Don't use a Cached Copy
+                        conn.setRequestMethod("POST");
+                        conn.setRequestProperty("Connection", "Keep-Alive");
+                        conn.setRequestProperty("ENCTYPE",
+                                "multipart/form-data");
+                        conn.setRequestProperty("Content-Type",
+                                "multipart/form-data;boundary=" + boundary);
+                        conn.setRequestProperty("bill", sourceFileUri);
+
+                        dos = new DataOutputStream(conn.getOutputStream());
+
+                        dos.writeBytes(twoHyphens + boundary + lineEnd);
+                        dos.writeBytes("Content-Disposition: form-data; name=\"bill\";filename=\""
+                                + sourceFileUri + "\"" + lineEnd);
+
+                        dos.writeBytes(lineEnd);
+
+                        // create a buffer of maximum size
+                        bytesAvailable = fileInputStream.available();
+
+                        bufferSize = Math.min(bytesAvailable, maxBufferSize);
+                        buffer = new byte[bufferSize];
+
+                        // read file and write it into form...
+                        bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+
+                        while (bytesRead > 0) {
+
+                            dos.write(buffer, 0, bufferSize);
+                            bytesAvailable = fileInputStream.available();
+                            bufferSize = Math
+                                    .min(bytesAvailable, maxBufferSize);
+                            bytesRead = fileInputStream.read(buffer, 0,
+                                    bufferSize);
+
+                        }
+
+                        // send multipart form data necesssary after file
+                        // data...
+                        dos.writeBytes(lineEnd);
+                        dos.writeBytes(twoHyphens + boundary + twoHyphens
+                                + lineEnd);
+
+                        // Responses from the server (code and message)
+                        serverResponseCode = conn.getResponseCode();
+                        String serverResponseMessage = conn
+                                .getResponseMessage();
+
+                        if (serverResponseCode == 200) {
+
+                            // messageText.setText(msg);
+                            //Toast.makeText(ctx, "File Upload Complete.",
+                            //      Toast.LENGTH_SHORT).show();
+
+                            // recursiveDelete(mDirectory1);
+
+                        }
+
+                        // close the streams //
+                        fileInputStream.close();
+                        dos.flush();
+                        dos.close();
+
+                    } catch (Exception e) {
+
+                        // dialog.dismiss();
+                        e.printStackTrace();
+
+                    }
+                    // dialog.dismiss();
+
+                } // End else block
+
+
+            } catch (Exception ex) {
+                // dialog.dismiss();
+
+                ex.printStackTrace();
+            }
+            return "Executed";
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+
+        }
+
+        @Override
+        protected void onPreExecute() {
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+        }
+    } */
+
+
+
+
+
 
     public void MediaRecorderReady(){
         mediaRecorder=new MediaRecorder();
