@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
+import android.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -49,6 +50,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        collectionPagerAdapter = new CollectionPagerAdapter(getSupportFragmentManager());
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPager.setAdapter(collectionPagerAdapter);
+
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabDots);
+        tabLayout.setupWithViewPager(viewPager, true);
+
         final ImageView bubble = (ImageView) findViewById(R.id.bubble_icon);
         final ImageView user = (ImageView) findViewById(R.id.user_icon);
 
@@ -59,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
                     GlobalVars.switchMode();
                     bubble.setImageResource(R.drawable.bubble_blue);
                     user.setImageResource(R.drawable.user_grey);
-                    //TODO refresh shown data
+                    updateFragments();
                 }
             }
         });
@@ -71,22 +79,14 @@ public class MainActivity extends AppCompatActivity {
                     GlobalVars.switchMode();
                     bubble.setImageResource(R.drawable.bubble_grey);
                     user.setImageResource(R.drawable.user_blue);
-                    //TODO refresh shown data
+                    updateFragments();
                 }
             }
         });
 
+
+
         random = new Random();
-
-
-        collectionPagerAdapter = new CollectionPagerAdapter(getSupportFragmentManager());
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
-        viewPager.setAdapter(collectionPagerAdapter);
-
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabDots);
-        tabLayout.setupWithViewPager(viewPager, true);
-
-
 
         ToggleButton toggle = (ToggleButton) findViewById(R.id.toggle);
         toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -158,6 +158,10 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });  */
+    }
+
+    private void updateFragments() {
+        collectionPagerAdapter.updateFragments();
     }
 
 

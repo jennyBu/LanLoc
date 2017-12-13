@@ -1,6 +1,7 @@
 package com.example.usi.lanloc;
 
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
@@ -16,12 +17,14 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Created by Jennifer Busta on 06.12.17.
  */
 
-public class NewestFragment extends ListFragment {
+public class NewestFragment extends ListFragment implements Observer {
     public LanLocArrayAdapter mAdapter;
 
     public NewestFragment() {
@@ -33,10 +36,17 @@ public class NewestFragment extends ListFragment {
 
         final View fragView = inflater.inflate(R.layout.most_popular_page, container, false);
 
-        List<Integer> positions = new ArrayList<>();
-        positions.add(1);
-        positions.add(2);
+        createListItems();
 
+        return fragView;
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        createListItems();
+    }
+
+    private void createListItems() {
         DatabaseActivity asyncTask = new DatabaseActivity(new AsyncResponse() {
 
             @Override
@@ -59,8 +69,11 @@ public class NewestFragment extends ListFragment {
         });
 
         // TODO pass here real position values
-        asyncTask.getRecordsAroundPosition(46.010475, 8.957006, 1000, "date");
-
-        return fragView;
+        if (GlobalVars.ALL_USER_MODE) {
+            asyncTask.getRecordsAroundPosition(46.010475, 8.957006, 1000, "date", null);
+        } else if (GlobalVars.SPECIFIC_USER_MODE) {
+            String android_id = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+            asyncTask.getRecordsAroundPosition(46.010475, 8.957006, 1000, "date", android_id);
+        }
     }
 }

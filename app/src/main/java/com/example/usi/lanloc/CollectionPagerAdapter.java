@@ -6,7 +6,12 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.example.usi.lanloc.map.MapFragment;
 
+import java.util.Observable;
+import java.util.Observer;
+
 public class CollectionPagerAdapter extends FragmentStatePagerAdapter {
+    private Observable observers = new FragmentObserver();
+
     public CollectionPagerAdapter(FragmentManager fm) {
         super(fm);
     }
@@ -18,16 +23,23 @@ public class CollectionPagerAdapter extends FragmentStatePagerAdapter {
         switch (position) {
             case 0:
                 fragment =  new MostPopularFragment();
-                return fragment;
+                break;
             case 1:
                 fragment =  new NewestFragment();
-                return fragment;
+                break;
             case 2:
                 fragment = new MapFragment();
-                return fragment;
+                break;
             default:
-                return null;
+                fragment = null;
+                break;
         }
+
+        if (fragment instanceof Observer) {
+            observers.addObserver((Observer) fragment);
+        }
+
+        return fragment;
     }
 
     @Override
@@ -47,5 +59,9 @@ public class CollectionPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public int getCount() {
         return NUMBER_OF_FRAGMENTS;
+    }
+
+    public void updateFragments() {
+        observers.notifyObservers();
     }
 }
