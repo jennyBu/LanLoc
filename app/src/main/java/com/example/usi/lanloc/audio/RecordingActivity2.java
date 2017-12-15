@@ -403,8 +403,8 @@ public class RecordingActivity2 extends AppCompatActivity {
                 BufferedReader inStream = null;
 
 
-
-                String lineEnd = "rn";
+                String lineEnd = "\r\n";
+              //  String lineEnd = "rn";
                 String twoHyphens = "--";
                 String boundary = "*****";
                 int bytesRead, bytesAvailable, bufferSize;
@@ -430,12 +430,12 @@ public class RecordingActivity2 extends AppCompatActivity {
                     conn.setRequestMethod("POST");
                     conn.setRequestProperty("Connection", "Keep-Alive");
                     conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
-                    conn.setRequestProperty("uploadedfile",AudioSavePathInDevice1);
+                    conn.setRequestProperty("fileToUpload",AudioSavePathInDevice1);
 
 
                     dos = new DataOutputStream(conn.getOutputStream());
                     dos.writeBytes(twoHyphens + boundary + lineEnd);
-                    dos.writeBytes("Content-Disposition: form-data; name=\"uploadedfile\";filename=\"" + AudioSavePathInDevice1 + "\"" + lineEnd);
+                    dos.writeBytes("Content-Disposition: form-data; name=\"fileToUpload\";filename=\"" + AudioSavePathInDevice1 + "\"" + lineEnd);
 
                     //dos.writeBytes("Content-Disposition: form-data; name="uploadedfile";filename="" + selectedPath + """ + lineEnd);
                     dos.writeBytes(lineEnd);
@@ -443,6 +443,8 @@ public class RecordingActivity2 extends AppCompatActivity {
                     bytesAvailable = fileInputStream.available();
                     bufferSize = Math.min(bytesAvailable, maxBufferSize);
                     buffer = new byte[bufferSize];
+                    System.out.println(buffer);
+                    System.out.println(bufferSize);
                     // read file and write it into form...
                     bytesRead = fileInputStream.read(buffer, 0, bufferSize);
                     while (bytesRead > 0) {
@@ -457,13 +459,22 @@ public class RecordingActivity2 extends AppCompatActivity {
                     // close streams
                     Log.e("Debug", "File is written");
                     Log.e("Debug",AudioSavePathInDevice1 );
+
+                    // TO DO  enter record on database with username, position and audio record path (AudiosavepathDevice). AudiosavepathDevice1 returns the audio filename only.
+
+                    
+                    int serverResponseCode = conn.getResponseCode();
+                    String serverResponseMessage = conn.getResponseMessage().toString();
+                    Log.i("joshtag", "HTTP Response is : "  + serverResponseMessage + ": " +  serverResponseCode);
+                    Log.i("joshtag", "HTTP Response is : "  + serverResponseMessage + ": " +  serverResponseCode);
+                    Log.i("joshtag", "HTTP Response is : "  + conn.getContent());
+
+
                     fileInputStream.close();
                     dos.flush();
                     dos.close();
 
-                    int serverResponseCode = conn.getResponseCode();
-                    String serverResponseMessage = conn.getResponseMessage().toString();
-                    Log.i("joshtag", "HTTP Response is : "  + serverResponseMessage + ": " +  serverResponseCode);
+
 
                 } catch (MalformedURLException ex) {
                     Log.e("Debug", "error: " + ex.getMessage(), ex);
