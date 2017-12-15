@@ -462,7 +462,7 @@ public class RecordingActivity2 extends AppCompatActivity {
 
                     // TO DO  enter record on database with username, position and audio record path (AudiosavepathDevice). AudiosavepathDevice1 returns the audio filename only.
 
-                    
+
                     int serverResponseCode = conn.getResponseCode();
                     String serverResponseMessage = conn.getResponseMessage().toString();
                     Log.i("joshtag", "HTTP Response is : "  + serverResponseMessage + ": " +  serverResponseCode);

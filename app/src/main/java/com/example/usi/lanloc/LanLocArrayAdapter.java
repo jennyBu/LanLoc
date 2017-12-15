@@ -1,13 +1,16 @@
 package com.example.usi.lanloc;
 
 import android.content.Context;
+import android.media.MediaPlayer;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.usi.lanloc.audio.RecordingActivity2;
 import com.example.usi.lanloc.db.AsyncResponse;
 import com.example.usi.lanloc.db.DatabaseActivity;
 
@@ -16,6 +19,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -30,6 +34,8 @@ import java.util.Locale;
 public class LanLocArrayAdapter extends ArrayAdapter<JSONObject> {
     private final Context context;
     private final JSONObject[] values;
+
+    MediaPlayer mediaPlayer ;
 
     public LanLocArrayAdapter(Context context, int lanloc_list_item, JSONObject[] values) {
         super(context, -1, values);
@@ -49,7 +55,7 @@ public class LanLocArrayAdapter extends ArrayAdapter<JSONObject> {
             handleUpVotes(value, rowView, id);
             handleDownVotes(value, rowView, id);
             handleDateTime(value, rowView);
-            handleAudio(value);
+            handleAudio(value, rowView);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -177,8 +183,41 @@ public class LanLocArrayAdapter extends ArrayAdapter<JSONObject> {
         return "now";
     }
 
-    private void handleAudio(JSONObject value) throws JSONException {
+    private void handleAudio(JSONObject value, View rowView) throws JSONException {
         String path = value.getString("audio");
+        ImageView speakerView = (ImageView) rowView.findViewById(R.id.icon);
+        speakerView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+
+                mediaPlayer = new MediaPlayer();
+                try{
+                    mediaPlayer.setDataSource("http://uc-edu.mobile.usilu.net/uploads/JBMPEAudioRecording.3gp");
+
+                    // TO MODIFY WITH PROPER PATH
+                    mediaPlayer.prepare();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                mediaPlayer.start();
+
+
+         /*       Integer upVotesCount = Integer.parseInt(upVotes);
+                upVotesCount++;
+                upVoteTextView.setText(upVotesCount.toString()); */
+
+        /*        DatabaseActivity asyncTask = new DatabaseActivity(new AsyncResponse() {
+                    @Override
+                    public void processFinish(Object output) { }
+                });
+                asyncTask.voteRecordUp(id); */
+            }
+        });
+
+
         // TODO on click listener + possibility to play back
     }
 }
