@@ -12,7 +12,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -22,15 +21,11 @@ import com.example.usi.lanloc.MainActivity;
 import com.example.usi.lanloc.R;
 
 import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -38,8 +33,6 @@ import java.util.Random;
 
 import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
-import static com.example.usi.lanloc.audio.RecordingActivity2.RequestPermissionCode;
-
 
 
 public class RecordingActivity2 extends AppCompatActivity {
@@ -65,7 +58,7 @@ public class RecordingActivity2 extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.audio2);
+        setContentView(R.layout.activity_recording);
 
         random = new Random();
 
@@ -186,7 +179,7 @@ public class RecordingActivity2 extends AppCompatActivity {
         }); */
 
 
-        ToggleButton toggle2 = (ToggleButton) findViewById(R.id.toggle2);
+        ToggleButton toggle2 = (ToggleButton) findViewById(R.id.toggle);
         toggle2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
