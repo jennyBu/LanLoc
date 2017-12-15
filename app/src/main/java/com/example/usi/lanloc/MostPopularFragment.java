@@ -3,9 +3,13 @@ package com.example.usi.lanloc;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.ListFragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.ListView;
 
 import com.example.usi.lanloc.db.AsyncResponse;
 import com.example.usi.lanloc.db.DatabaseActivity;
@@ -24,7 +28,6 @@ import java.util.Observer;
  */
 
 public class MostPopularFragment extends ListFragment implements Observer {
-
     public LanLocArrayAdapter mAdapter;
 
     public MostPopularFragment() {
@@ -48,7 +51,6 @@ public class MostPopularFragment extends ListFragment implements Observer {
 
     private void createListItems() {
         DatabaseActivity asyncTask = new DatabaseActivity(new AsyncResponse() {
-
             @Override
             public void processFinish(Object output) {
                 if (output.getClass().equals(JSONArray.class)) {
@@ -69,11 +71,14 @@ public class MostPopularFragment extends ListFragment implements Observer {
         });
 
         // TODO pass here real position values
+        String android_id = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
         if (GlobalVars.ALL_USER_MODE) {
-            asyncTask.getRecordsAroundPosition(46.010475, 8.957006, 1000, "default", null);
+            asyncTask.getRecordsAroundPosition(46.010475, 8.957006, 1000, "default", android_id, false);
         } else if (GlobalVars.SPECIFIC_USER_MODE) {
-            String android_id = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
-            asyncTask.getRecordsAroundPosition(46.010475, 8.957006, 1000, "default", android_id);
+            asyncTask.getRecordsAroundPosition(46.010475, 8.957006, 1000, "default", android_id, true);
         }
+
+        //TODO do click events here to be able to call updates??
+
     }
 }

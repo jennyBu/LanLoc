@@ -51,6 +51,8 @@ public class LanLocArrayAdapter extends ArrayAdapter<JSONObject> {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rowView = inflater.inflate(R.layout.lanloc_list_item, parent, false);
 
+
+
         try {
             JSONObject value = values[position];
             Integer id = value.getInt("id");
@@ -67,48 +69,81 @@ public class LanLocArrayAdapter extends ArrayAdapter<JSONObject> {
         return rowView;
     }
 
-    private void handleDownVotes(final JSONObject value, View rowView, final Integer id) throws JSONException {
+    private void handleDownVotes(final JSONObject value, final View rowView, final Integer id) throws JSONException {
         final String downVotes = value.getString("down_votes");
+        final int isVotable = value.getInt("isVotable");
         final TextView downVoteTextView = (TextView) rowView.findViewById(R.id.downVotes);
         downVoteTextView.setText(downVotes);
 
         ImageView downVoteImageView = (ImageView) rowView.findViewById(R.id.iconDownVotes);
-        downVoteImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Integer downVotesCount = Integer.parseInt(downVotes);
-                downVotesCount++;
-                downVoteTextView.setText(downVotesCount.toString());
+        if (isVotable == 1) {
+            downVoteImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DatabaseActivity asyncTask = new DatabaseActivity(new AsyncResponse() {
+                        @Override
+                        public void processFinish(Object output) {
+                        }
+                    });
+                    asyncTask.voteRecordDown(id, androidId);
 
-                DatabaseActivity asyncTask = new DatabaseActivity(new AsyncResponse() {
-                    @Override
-                    public void processFinish(Object output) { }
-                });
-                asyncTask.voteRecordDown(id, androidId);
-            }
-        });
+                    GlobalVars.COLLECTION_PAGER_ADAPTER.updateFragments();
+
+                    disableDownVote(rowView);
+                    disableUpVote(rowView);
+
+                    Integer downVotesCount = Integer.parseInt(downVotes);
+                    downVotesCount++;
+                    downVoteTextView.setText(downVotesCount.toString());
+                }
+            });
+        } else {
+            disableDownVote(rowView);
+        }
     }
 
-    private void handleUpVotes(JSONObject value, View rowView, final Integer id) throws JSONException {
+    private void disableDownVote(View rowView) {
+        final ImageView downVoteIcon = (ImageView) rowView.findViewById(R.id.iconDownVotes);
+        downVoteIcon.setImageResource(R.drawable.ic_down_vote_grey);
+    }
+
+    private void handleUpVotes(JSONObject value, final View rowView, final Integer id) throws JSONException {
         final String upVotes = value.getString("up_votes");
+        final int isVotable = value.getInt("isVotable");
         final TextView upVoteTextView = (TextView) rowView.findViewById(R.id.upVotes);
         upVoteTextView.setText(upVotes);
+
         ImageView upVoteImageView = (ImageView) rowView.findViewById(R.id.iconUpVotes);
-        upVoteImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Integer upVotesCount = Integer.parseInt(upVotes);
-                upVotesCount++;
-                upVoteTextView.setText(upVotesCount.toString());
+        if (isVotable == 1) {
+            upVoteImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DatabaseActivity asyncTask = new DatabaseActivity(new AsyncResponse() {
+                        @Override
+                        public void processFinish(Object output) {
+                        }
+                    });
 
-                DatabaseActivity asyncTask = new DatabaseActivity(new AsyncResponse() {
-                    @Override
-                    public void processFinish(Object output) { }
-                });
+                    asyncTask.voteRecordUp(id, androidId);
 
-                asyncTask.voteRecordUp(id, androidId);
-            }
-        });
+                    GlobalVars.COLLECTION_PAGER_ADAPTER.updateFragments();
+
+                    disableUpVote(rowView);
+                    disableDownVote(rowView);
+
+                    Integer upVotesCount = Integer.parseInt(upVotes);
+                    upVotesCount++;
+                    upVoteTextView.setText(upVotesCount.toString());
+                }
+            });
+        } else {
+            disableUpVote(rowView);
+        }
+    }
+
+    private void disableUpVote(View rowView) {
+        final ImageView downVoteIcon = (ImageView) rowView.findViewById(R.id.iconUpVotes);
+        downVoteIcon.setImageResource(R.drawable.ic_up_vote_grey);
     }
 
     private void handleDateTime(JSONObject value, View rowView) throws JSONException {

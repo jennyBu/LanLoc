@@ -144,7 +144,7 @@ public class DatabaseActivity extends AsyncTask<Object, Object, Object> {
      * @param order in which the results are sorted (type "default" for sorting by popularity and "date" for sorting by date)
      * @return all records in the range of the distance around the current position
      */
-    public Object getRecordsAroundPosition(Double latitude, Double longitude, Integer distance, String order, String android_id) {
+    public Object getRecordsAroundPosition(Double latitude, Double longitude, Integer distance, String order, String android_id, Boolean filterByUser) {
         String lat = Double.toString(latitude);
         String lon = Double.toString(longitude);
         String dist = distance.toString();
@@ -155,9 +155,10 @@ public class DatabaseActivity extends AsyncTask<Object, Object, Object> {
             data += "&" + URLEncoder.encode("longitude", "UTF-8") + "=" + URLEncoder.encode(lon, "UTF-8");
             data += "&" + URLEncoder.encode("distance", "UTF-8") + "=" + URLEncoder.encode(dist, "UTF-8");
             data += "&" + URLEncoder.encode("order", "UTF-8") + "=" + URLEncoder.encode(order, "UTF-8");
-            if (android_id != null) {
+            data += "&" + URLEncoder.encode("android_id", "UTF-8") + "=" + URLEncoder.encode(android_id, "UTF-8");
+            if (filterByUser) {
                 //String android_id = Secure.getString(getContext().getContentResolver(),Secure.ANDROID_ID);
-                data += "&" + URLEncoder.encode("android_id", "UTF-8") + "=" + URLEncoder.encode(android_id, "UTF-8");
+                data += "&" + URLEncoder.encode("filterByUser", "UTF-8") + "=" + URLEncoder.encode("true", "UTF-8");
             }
 
             return execute(data);

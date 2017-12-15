@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +42,7 @@ public class NewestFragment extends ListFragment implements Observer {
         return fragView;
     }
 
+
     @Override
     public void update(Observable o, Object arg) {
         createListItems();
@@ -69,11 +71,11 @@ public class NewestFragment extends ListFragment implements Observer {
         });
 
         // TODO pass here real position values
+        String android_id = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
         if (GlobalVars.ALL_USER_MODE) {
-            asyncTask.getRecordsAroundPosition(46.010475, 8.957006, 1000, "date", null);
+            asyncTask.getRecordsAroundPosition(46.010475, 8.957006, 1000, "date", android_id, false);
         } else if (GlobalVars.SPECIFIC_USER_MODE) {
-            String android_id = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
-            asyncTask.getRecordsAroundPosition(46.010475, 8.957006, 1000, "date", android_id);
+            asyncTask.getRecordsAroundPosition(46.010475, 8.957006, 1000, "date", android_id, true);
         }
     }
 }
