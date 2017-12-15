@@ -1,6 +1,7 @@
 package com.example.usi.lanloc;
 
 import android.content.Context;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,8 @@ import java.util.Locale;
 public class LanLocArrayAdapter extends ArrayAdapter<JSONObject> {
     private final Context context;
     private final JSONObject[] values;
+    // TODO make androidId global
+    String androidId = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
     public LanLocArrayAdapter(Context context, int lanloc_list_item, JSONObject[] values) {
         super(context, -1, values);
@@ -75,7 +78,7 @@ public class LanLocArrayAdapter extends ArrayAdapter<JSONObject> {
                     @Override
                     public void processFinish(Object output) { }
                 });
-                asyncTask.voteRecordDown(id);
+                asyncTask.voteRecordDown(id, androidId);
             }
         });
     }
@@ -96,7 +99,8 @@ public class LanLocArrayAdapter extends ArrayAdapter<JSONObject> {
                     @Override
                     public void processFinish(Object output) { }
                 });
-                asyncTask.voteRecordUp(id);
+
+                asyncTask.voteRecordUp(id, androidId);
             }
         });
     }

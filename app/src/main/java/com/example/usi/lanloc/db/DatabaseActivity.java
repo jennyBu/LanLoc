@@ -220,12 +220,13 @@ public class DatabaseActivity extends AsyncTask<Object, Object, Object> {
      *
      * @param recordId id of the record that should get an upvote
      */
-    public void voteRecordUp(Integer recordId) {
+    public void voteRecordUp(Integer recordId, String androidId) {
         String record = recordId.toString();
 
         try {
             String data = URLEncoder.encode("method", "UTF-8") + "=" + URLEncoder.encode("voteRecordUp", "UTF-8");
             data += "&" + URLEncoder.encode("record", "UTF-8") + "=" + URLEncoder.encode(record, "UTF-8");
+            data += "&" + URLEncoder.encode("android_id", "UTF-8") + "=" + URLEncoder.encode(androidId, "UTF-8");
 
             execute(data);
         } catch (Exception e) {
@@ -236,12 +237,13 @@ public class DatabaseActivity extends AsyncTask<Object, Object, Object> {
     /**
      * @param recordId id of the record that should get a downvote
      */
-    public void voteRecordDown(Integer recordId) {
+    public void voteRecordDown(Integer recordId, String androidId) {
         String record = recordId.toString();
 
         try {
             String data = URLEncoder.encode("method", "UTF-8") + "=" + URLEncoder.encode("voteRecordDown", "UTF-8");
             data += "&" + URLEncoder.encode("record", "UTF-8") + "=" + URLEncoder.encode(record, "UTF-8");
+            data += "&" + URLEncoder.encode("android_id", "UTF-8") + "=" + URLEncoder.encode(androidId, "UTF-8");
 
             execute(data);
         } catch (Exception e) {
