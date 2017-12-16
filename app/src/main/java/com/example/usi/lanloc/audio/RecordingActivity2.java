@@ -7,6 +7,7 @@ import android.media.MediaRecorder;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -17,8 +18,16 @@ import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.example.usi.lanloc.GlobalVars;
+import com.example.usi.lanloc.LanLocArrayAdapter;
 import com.example.usi.lanloc.MainActivity;
 import com.example.usi.lanloc.R;
+import com.example.usi.lanloc.db.AsyncResponse;
+import com.example.usi.lanloc.db.DatabaseActivity;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -91,6 +100,8 @@ public class RecordingActivity2 extends AppCompatActivity {
                 //              Toast.LENGTH_LONG).show();
 //                startActivity(new Intent(MainActivity.this, RecordingActivity.class));
                 doFileUpload();
+                addToDatabase();
+                startActivity(new Intent(RecordingActivity2.this, MainActivity.class));
               //  new UploadFileAsync().execute("");
             }
         });
@@ -261,6 +272,18 @@ public class RecordingActivity2 extends AppCompatActivity {
         }); W*/
 
 
+    }
+
+    private void addToDatabase() {
+        DatabaseActivity asyncTask = new DatabaseActivity(new AsyncResponse() {
+            @Override
+            public void processFinish(Object output) {
+
+            }
+        });
+
+        //TODO pass here correct position and file path
+        asyncTask.addRecord(GlobalVars.ANDROID_ID, 46.010475, 8.957006, "uploads/JBMPEAudioRecording.3gp");
     }
 
 

@@ -71,14 +71,10 @@ public class MostPopularFragment extends ListFragment implements Observer {
         });
 
         // TODO pass here real position values
-        String android_id = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
         if (GlobalVars.ALL_USER_MODE) {
-            asyncTask.getRecordsAroundPosition(46.010475, 8.957006, 1000, "default", android_id, false);
+            asyncTask.getRecordsAroundPosition(46.010475, 8.957006, 1000, "default", GlobalVars.ANDROID_ID, false);
         } else if (GlobalVars.SPECIFIC_USER_MODE) {
-            asyncTask.getRecordsAroundPosition(46.010475, 8.957006, 1000, "default", android_id, true);
+            asyncTask.getRecordsAroundPosition(46.010475, 8.957006, 1000, "default", GlobalVars.ANDROID_ID, true);
         }
-
-        //TODO do click events here to be able to call updates??
-
     }
 }

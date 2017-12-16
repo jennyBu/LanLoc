@@ -197,19 +197,21 @@ public class DatabaseActivity extends AsyncTask<Object, Object, Object> {
 
     /**
      *
-     * @param userId foreign key for user (id column in user table)
-     * @param positionId foreign key for position (id column in positions table)
-     * @param path path to the RecordingActivity file on file server
+     * @param androidId of the user uploading a record
+     * @param latitude of the users' position
+     * @param longitude of the users' position
+     * @param path to the audio file on the server
      */
-    public void addRecord(Integer userId, Integer positionId, String path) {
-        String user = userId.toString();
-        String position = positionId.toString();
+    public void addRecord(String androidId, Double latitude, Double longitude, String path) {
+        String lat = Double.toString(latitude);
+        String lon = Double.toString(longitude);
 
         try {
             String data = URLEncoder.encode("method", "UTF-8") + "=" + URLEncoder.encode("addRecord", "UTF-8");
-            data += "&" + URLEncoder.encode("user", "UTF-8") + "=" + URLEncoder.encode(user, "UTF-8");
-            data += "&" + URLEncoder.encode("position", "UTF-8") + "=" + URLEncoder.encode(position, "UTF-8");
-            data += "&" + URLEncoder.encode("RecordingActivity", "UTF-8") + "=" + URLEncoder.encode(path, "UTF-8");
+            data += "&" + URLEncoder.encode("android_id", "UTF-8") + "=" + URLEncoder.encode(androidId, "UTF-8");
+            data += "&" + URLEncoder.encode("latitude", "UTF-8") + "=" + URLEncoder.encode(lat, "UTF-8");
+            data += "&" + URLEncoder.encode("longitude", "UTF-8") + "=" + URLEncoder.encode(lon, "UTF-8");
+            data += "&" + URLEncoder.encode("audio", "UTF-8") + "=" + URLEncoder.encode(path, "UTF-8");
 
             execute(data);
         } catch (Exception e) {
