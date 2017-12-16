@@ -1,11 +1,20 @@
 package com.example.usi.lanloc.map;
 
+import android.content.Context;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.example.usi.lanloc.R;
+
+import java.io.IOException;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -17,6 +26,7 @@ import android.support.v4.app.ActivityCompat;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -34,17 +44,32 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
 
     private static View fragView;
     private GoogleMap googleMapInstance;
-    //LocationManager locationManager;
+    LocationManager locationManager;
 
 
     public MapFragment() {
         super();
     }
 
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View fragView = inflater.inflate(R.layout.map_page, container, false);
+            super.onCreateView(inflater, container, savedInstanceState);
+
+            try {
+                fragView = inflater.inflate(R.layout.map_page, container, false);
+            } catch (InflateException ex) {
+                // map is already ready
+                System.err.println("------- ERR" + ex);
+            }
+
+        com.google.android.gms.maps.MapFragment m = (com.google.android.gms.maps.MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.mapFragment);
+
+        m.getMapAsync(this);
+
         return fragView;
-    }
+
+
+        }
 
     @Override
     public void update(Observable o, Object arg) {
@@ -91,6 +116,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
 //    }
 
     public void onMapReady(GoogleMap googleMap) {
+        System.out.println("I AM RIGHT HERE");
 
         googleMapInstance = googleMap;
 
@@ -106,14 +132,51 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         }
         googleMapInstance.setMyLocationEnabled(true);
 
+        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+
+        Location l = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (l != null) {
+            LatLng ll = new LatLng(l.getLatitude(), l.getLongitude());
+            putMarker(ll, "Here I am");
+        } else {
+            System.out.println("NO PREVIOUS LOCATION");
+        }
+
+        //Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+//        double latitude = location.getLatitude();
+//        double longitude = location.getLatitude();
+//
+//        LatLng  latLng = new LatLng(latitude, longitude);
+//        //Instantiate the class, Geocoder
+//        //Geocoder geocoder = new Geocoder(getApplicationContext());
+//
+//
+//        //List<Address> addessList = geocoder.getFromLocation(latitude, longitude, 1);
+////        String str = addessList.get(0).getLocality()+",";
+////        str += addessList.get(0).getCountryName();
+//        googleMap.addMarker(new MarkerOptions().position(latLng));
+//        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10.2f));
+
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        googleMapInstance.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        googleMapInstance.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        //LatLng sydney = new LatLng(-34, 151);
+        //putMarker(sydney, "Marker in Sydney");
+    }
+
+    public void loadMarkers(LatLng currentLoc) {
+        // you call db provider to get you list of locations
     }
 
 
+    public void putMarker(LatLng loc, String title) {
+        if (googleMapInstance == null) {
+            return;
+        }
 
+        googleMapInstance.addMarker(new MarkerOptions().position(loc).title(title));
+        googleMapInstance.moveCamera(CameraUpdateFactory.newLatLng(loc));
+        //
+    }
 
 
 

@@ -1,7 +1,11 @@
 package com.example.usi.lanloc.audio;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.AsyncTask;
@@ -24,6 +28,7 @@ import com.example.usi.lanloc.MainActivity;
 import com.example.usi.lanloc.R;
 import com.example.usi.lanloc.db.AsyncResponse;
 import com.example.usi.lanloc.db.DatabaseActivity;
+import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -282,8 +287,30 @@ public class RecordingActivity2 extends AppCompatActivity {
             }
         });
 
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        Location l = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (l != null) {
+            asyncTask.addRecord(GlobalVars.ANDROID_ID, l.getLatitude(), l.getLongitude(), "uploads/"+ AudioSavePathInDevice);
+
+        } else {
+            System.out.println("Can't add recording, no previous location");
+        }
+
         //TODO pass here correct position and file path
-        asyncTask.addRecord(GlobalVars.ANDROID_ID, 46.010475, 8.957006, "uploads/"+ AudioSavePathInDevice);
+        //asyncTask.addRecord(GlobalVars.ANDROID_ID, 46.010475, 8.957006, "uploads/"+ AudioSavePathInDevice);
+
     }
 
 
