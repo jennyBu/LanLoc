@@ -18,6 +18,12 @@ import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import android.content.Context;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+
+
 import com.example.usi.lanloc.audio.RecordingActivity2;
 
 import java.io.IOException;
@@ -31,6 +37,9 @@ public class MainActivity extends AppCompatActivity {
     ImageView recordview;
     CollectionPagerAdapter collectionPagerAdapter;
     ViewPager viewPager;
+
+    LocationManager locationManager;
+    LocationListener locationListener;
 
 
     public String AudioSavePathInDevice = null;
@@ -83,6 +92,29 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                //System.out.println("Location updated " + location);
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
+        };
 
 
 
@@ -159,6 +191,47 @@ public class MainActivity extends AppCompatActivity {
             }
         });  */
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        System.out.println("RESUME");
+        startUpdatingGPS();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopUpdatingGPS();
+    }
+
+    private void startUpdatingGPS() {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+
+            return;
+        }
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+
+    }
+
+    private void stopUpdatingGPS() {
+        locationManager.removeUpdates(locationListener);
+
+    }
+
+
+
+
+
+
+
 
     private void updateFragments() {
         collectionPagerAdapter.updateFragments();
