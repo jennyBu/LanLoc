@@ -1,5 +1,6 @@
 package com.example.usi.lanloc;
 
+import android.*;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
@@ -100,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onLocationChanged(Location location) {
                 //System.out.println("Location updated " + location);
+
             }
 
             @Override
@@ -227,8 +229,6 @@ public class MainActivity extends AppCompatActivity {
         locationManager.removeUpdates(locationListener);
 
     }
-
-
 
 
     @Override
