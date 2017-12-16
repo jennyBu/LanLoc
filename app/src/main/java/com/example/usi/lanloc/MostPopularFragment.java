@@ -46,6 +46,7 @@ public class MostPopularFragment extends ListFragment implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
+
         createListItems();
     }
 

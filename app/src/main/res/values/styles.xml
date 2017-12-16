@@ -6,6 +6,11 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:actionButtonStyle">@style/UpdateButton</item>
+    </style>
+
+    <style name="UpdateButton" parent="@android:style/Widget.ActionButton">
+        <item name="android:drawablePadding">40px</item>
     </style>
 
 </resources>

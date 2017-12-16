@@ -12,6 +12,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
+import android.view.Menu;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -229,7 +231,21 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.update, menu);
 
+        final MenuItem menuItemUpdate = menu.findItem(R.id.menuItemUpdate);
+        menuItemUpdate.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                updateFragments();
+                return true;
+            }
+        });
+
+        return true;
+    }
 
 
 

@@ -22,10 +22,10 @@ public class CollectionPagerAdapter extends FragmentStatePagerAdapter {
         Fragment fragment;
         switch (position) {
             case 0:
-                fragment =  new MostPopularFragment();
+                fragment =  new NewestFragment();
                 break;
             case 1:
-                fragment =  new NewestFragment();
+                fragment =  new MostPopularFragment();
                 break;
             case 2:
                 fragment = new MapFragment();
@@ -46,11 +46,11 @@ public class CollectionPagerAdapter extends FragmentStatePagerAdapter {
     public CharSequence getPageTitle(int position) {
         switch (position) {
             case 0:
-                return ""; //"Most Popular";
+                return "Newest";
             case 1:
-                return ""; //"Newest";
+                return "Most Popular";
             case 2:
-                return ""; //"Map";
+                return "Map";
             default:
                 return "EMPTY TAB";
         }
