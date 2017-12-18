@@ -19,7 +19,9 @@ import com.example.usi.lanloc.R;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -63,6 +65,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
     LocationManager locationManager;
     public LanLocArrayAdapter mAdapter;
     MediaPlayer mediaPlayer;
+    private HashMap<LatLng, String> paths = new HashMap<>();
 
 
     public MapFragment() {
@@ -190,7 +193,9 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
 
                             final String path = jsn.getString("audio");
 
-                            putMarker(lalo, path);
+                            paths.put(lalo,path);
+
+                            putMarker(lalo);
 
 
                         }
@@ -224,7 +229,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
 
     //Puts custom voice record markets
     //public void putMarker(LatLng loc, String title) {
-    public void putMarker(LatLng loc, String path) {
+    public void putMarker(LatLng loc) {
         if (googleMapInstance == null) {
             return;
         }
@@ -246,7 +251,8 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
 
     @Override
     public boolean onMarkerClick(final Marker marker) {
-        final String path = "uploads/IEMJLAudioRecording.3gp";//value.getString("audio").replace("/storage/emulated/0/","");
+        LatLng position = marker.getPosition();
+        final String path = paths.get(position);//value.getString("audio").replace("/storage/emulated/0/","");
 
                 mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                     @Override
