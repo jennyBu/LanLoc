@@ -96,6 +96,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
     @Override
     public void update(Observable o, Object arg) {
         if (this.isAdded()) {
+            googleMapInstance.clear();
             createAllMarkers();
         }
     }
