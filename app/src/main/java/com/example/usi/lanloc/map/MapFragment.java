@@ -154,7 +154,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
             googleMapInstance.moveCamera(CameraUpdateFactory.newLatLngZoom(ll,16f));
 
             //Custom marker added
-            putMarker(ll, "Here I am");
+            //putMarker(ll);
         } else {
             System.out.println("NO PREVIOUS LOCATION");
         }
@@ -202,23 +202,76 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
 //        });
 
 
+//========================
+//    public MapFragment(Context context, int lanloc_list_item, JSONObject[] values) {
+//
+//    }
+//
+//    public void markersinmap (JSONObject value, JSONObject[] values, final Integer id) throws JSONException {
+//        final String la = value.getString("latitude");
+//        final String lo = value.getString("longitude");
+//
+//
+//        LatLng lalo = LatLng(double la, double lo);
+//
+//        putMarker(lalo);
+//
+//
+//    }
+    DatabaseActivity asyncTask = new DatabaseActivity(new AsyncResponse() {
+        @Override
+        public void processFinish(Object output) {
+            if (output.getClass().equals(JSONArray.class)) {
+                try {
+                    JSONArray jsonArray = (JSONArray) output;
+                    JSONObject records[] = new JSONObject[jsonArray.length()];
+
+
+                       // final int latitude, longitude = JSONObject("latitude");
+                    for (int i = 0; i < jsonArray.length(); ++i) {
+
+                        JSONObject jsn = jsonArray.getJSONObject(i);
+
+                        final int latitude = jsn.getInt("latitude");
+                        final int longitude  = jsn.getInt("longitude");
+
+                        LatLng lalo = new LatLng(latitude, longitude);
+
+                        putMarker(lalo);
+
+
+                    }
+
+
+                   // mAdapter = new LanLocArrayAdapter(getActivity(), R.layout.lanloc_list_item, records);
+                   // setListAdapter(mAdapter);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    });
 
 
 
+
+
+//==================
 
     public void loadMarkers(LatLng currentLoc) {
         // you call db provider to get you list of locations
     }
 
     //Puts custom voice record markets
-    public void putMarker(LatLng loc, String title) {
+    //public void putMarker(LatLng loc, String title) {
+    public void putMarker(LatLng loc) {
         if (googleMapInstance == null) {
             return;
         }
         //customizes the marker
         MarkerOptions options = new MarkerOptions()
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_speaker))
-                .position(loc).title(title);
+                .position(loc);
 
         googleMapInstance.addMarker(options);
         //googleMapInstance.moveCamera(CameraUpdateFactory.newLatLngZoom(loc,16f));
