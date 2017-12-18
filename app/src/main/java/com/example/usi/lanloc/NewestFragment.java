@@ -23,6 +23,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -65,13 +66,20 @@ public class NewestFragment extends ListFragment implements Observer {
                         JSONObject records[] = new JSONObject[jsonArray.length()];
                         for (int i = 0; i < jsonArray.length(); i++) {
                             records[i] = jsonArray.getJSONObject(i);
+                            //prints the content of array records
                         }
+                        System.out.println("!!!!!!!!!!!!THIS IS THE DATA BASE ARRAY!!!!!!!! ");
+                        System.out.println(Arrays.toString(records));
+
 
                         mAdapter = new LanLocArrayAdapter(getActivity(), R.layout.lanloc_list_item, records);
                         setListAdapter(mAdapter);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+
+
+
                 }
             }
         });

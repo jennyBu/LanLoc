@@ -11,6 +11,8 @@ import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.example.usi.lanloc.LanLocArrayAdapter;
 import com.example.usi.lanloc.R;
 
 import java.io.IOException;
@@ -23,13 +25,22 @@ import java.util.Observer;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
+
+import com.example.usi.lanloc.db.AsyncResponse;
+import com.example.usi.lanloc.db.DatabaseActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import static android.content.Context.LOCATION_SERVICE;
 
@@ -45,6 +56,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
     private static View fragView;
     private GoogleMap googleMapInstance;
     LocationManager locationManager;
+    public LanLocArrayAdapter mAdapter;
 
 
     public MapFragment() {
@@ -137,6 +149,11 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         Location l = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         if (l != null) {
             LatLng ll = new LatLng(l.getLatitude(), l.getLongitude());
+
+            googleMapInstance.addMarker(new MarkerOptions().position(ll));
+            googleMapInstance.moveCamera(CameraUpdateFactory.newLatLngZoom(ll,16f));
+
+            //Custom marker added
             putMarker(ll, "Here I am");
         } else {
             System.out.println("NO PREVIOUS LOCATION");
@@ -162,20 +179,56 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         //LatLng sydney = new LatLng(-34, 151);
         //putMarker(sydney, "Marker in Sydney");
     }
+        //TODO I NEED TO GET THE COORDINATES OF EACH VOICE RECORDS FROM THE ARRAY, HOW?
+//    private void createListItems() {
+//        DatabaseActivity asyncTask = new DatabaseActivity(new AsyncResponse() {
+//            @Override
+//            public void processFinish(Object output) {
+//                if (output.getClass().equals(JSONArray.class)) {
+//                    try {
+//                        JSONArray jsonArray = (JSONArray) output;
+//                        JSONObject records[] = new JSONObject[jsonArray.length()];
+//                        for (int i = 0; i < jsonArray.length(); i++) {
+//                            records[i] = jsonArray.getJSONObject(i);
+//                        }
+//
+//                        mAdapter = new LanLocArrayAdapter(getActivity(), R.layout.lanloc_list_item, records);
+//                        setListAdapter(mAdapter);
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        });
+
+
+
+
+
 
     public void loadMarkers(LatLng currentLoc) {
         // you call db provider to get you list of locations
     }
 
-
+    //Puts custom voice record markets
     public void putMarker(LatLng loc, String title) {
         if (googleMapInstance == null) {
             return;
         }
+        //customizes the marker
+        MarkerOptions options = new MarkerOptions()
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_speaker))
+                .position(loc).title(title);
 
-        googleMapInstance.addMarker(new MarkerOptions().position(loc).title(title));
-        googleMapInstance.moveCamera(CameraUpdateFactory.newLatLng(loc));
+        googleMapInstance.addMarker(options);
+        //googleMapInstance.moveCamera(CameraUpdateFactory.newLatLngZoom(loc,16f));
+        //googleMapInstance.moveCamera(CameraUpdateFactory.newLatLng(loc));
         //
+
+
+//        googleMapInstance.addMarker(new MarkerOptions().position(loc).title(title));
+//        googleMapInstance.moveCamera(CameraUpdateFactory.newLatLngZoom(loc,16f));
+//        //googleMapInstance.moveCamera(CameraUpdateFactory.newLatLng(loc));
     }
 
 
