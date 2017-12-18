@@ -44,8 +44,9 @@ public class MostPopularFragment extends ListFragment implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-
-        createListItems();
+        if (this.isAdded()) {
+            createListItems();
+        }
     }
 
     private void createListItems() {
@@ -70,9 +71,12 @@ public class MostPopularFragment extends ListFragment implements Observer {
         });
 
         //THIS GETS THE CURRENT GPS LOCATION OF USER TO FIND VOICE RECORDING IN A 1000 RADIUS AROUND THAT IT
+        try{
         if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
+        }} catch (Exception e) {
+            String s = "s";
         }
 
         LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
