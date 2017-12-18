@@ -84,6 +84,7 @@ public class NewestFragment extends ListFragment implements Observer {
             }
         });
 
+        //TODO no dialog for granting position appears (needs to be done manually, otherwise it just stops here!)
         //THIS GETS THE CURRENT GPS LOCATION OF USER TO FIND VOICE RECORDING IN A 1000 RADIUS AROUND THAT IT.
         if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
