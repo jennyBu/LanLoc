@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
                 if (isChecked) {
 
 
-                    if(checkPermission()) {
+               /*     if(checkPermission()) {
 
                         AudioSavePathInDevice1 = CreateRandomAudioFileName(5) + "AudioRecording.3gp";
 
@@ -153,10 +153,15 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                         Toast.makeText(MainActivity.this, "Start recording",
-                                Toast.LENGTH_LONG).show();
+                                Toast.LENGTH_LONG).show();*/
+
+                        Intent RecordingActivity2 = new Intent(MainActivity.this, RecordingActivity2.class);
 
 
-                    } else {
+                        //     startActivity(new Intent(MainActivity.this, RecordingActivity2.class));
+                        startActivity(RecordingActivity2);
+
+/*                    } else {
                         requestPermission();
                     }
 
@@ -164,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
 
                     // The toggle is enabled
                 } else {
-                    Toast.makeText(MainActivity.this, "Stop recording",
+              /*      Toast.makeText(MainActivity.this, "Stop recording",
                             Toast.LENGTH_LONG).show();
 
                     mediaRecorder.stop();
@@ -175,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
 
                     //     startActivity(new Intent(MainActivity.this, RecordingActivity2.class));
                     startActivity(RecordingActivity2);
-                    // The toggle is disabled
+                    // The toggle is disabled*/
                 }
             }
         });

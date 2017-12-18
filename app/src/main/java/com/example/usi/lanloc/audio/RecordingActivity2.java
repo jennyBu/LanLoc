@@ -68,6 +68,7 @@ public class RecordingActivity2 extends AppCompatActivity {
     ImageView pauseview;
     ImageView uploadview;
     ImageView backview;
+    ImageView speaker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +87,38 @@ public class RecordingActivity2 extends AppCompatActivity {
         playview = (ImageView) findViewById(R.id.play_icon);
         backview = (ImageView) findViewById(R.id.back_icon);
         uploadview = (ImageView) findViewById(R.id.upload_icon);
+        speaker = (ImageView) findViewById(R.id.imageView);
+
+
+        AudioSavePathInDevice3= CreateRandomAudioFileName(5) + "AudioRecording.3gp";
+        AudioSavePathInDevice2 =
+                Environment.getExternalStorageDirectory().getAbsolutePath() + "/" +
+                        AudioSavePathInDevice3;
+        AudioSavePathInDevice = AudioSavePathInDevice2;
+        AudioSavePathInDevice1 = AudioSavePathInDevice3;
+
+        MediaRecorderReady();
+
+        try {
+            mediaRecorder.prepare();
+            mediaRecorder.start();
+        } catch (IllegalStateException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        Toast.makeText(RecordingActivity2.this, "Start recording",
+                Toast.LENGTH_LONG).show();
+
+
+
+
+
+
+
 
         backview.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,6 +130,28 @@ public class RecordingActivity2 extends AppCompatActivity {
 
             }
         });
+
+        playview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                mediaPlayer = new MediaPlayer();
+                try {
+                    mediaPlayer.setDataSource(AudioSavePathInDevice);
+                    mediaPlayer.prepare();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                mediaPlayer.start();
+                Toast.makeText(RecordingActivity2.this, "Playing",
+                        Toast.LENGTH_LONG).show();
+            }
+        });
+
+
+
 
         uploadview.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,10 +172,13 @@ public class RecordingActivity2 extends AppCompatActivity {
 
 
         ToggleButton toggle = (ToggleButton) findViewById(R.id.toggle);
+        toggle.setChecked(true);
+        speaker.setImageResource(R.drawable.ic_speaker_orange_big);
         toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
 
+                    speaker.setImageResource(R.drawable.ic_speaker_orange_big);
 
                     if (checkPermission()) {
 
@@ -156,6 +214,7 @@ public class RecordingActivity2 extends AppCompatActivity {
 
                     // The toggle is enabled
                 } else {
+                    speaker.setImageResource(R.drawable.ic_speaker_big);
                     Toast.makeText(RecordingActivity2.this, "Stop recording",
                             Toast.LENGTH_LONG).show();
 
@@ -197,7 +256,7 @@ public class RecordingActivity2 extends AppCompatActivity {
         }); */
 
 
-        ToggleButton toggle2 = (ToggleButton) findViewById(R.id.toggle);
+  /*      ToggleButton toggle2 = (ToggleButton) findViewById(R.id.toggle);
         toggle2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
@@ -233,7 +292,7 @@ public class RecordingActivity2 extends AppCompatActivity {
                     // The toggle is disabled
                 }
             }
-        });
+        });*/
 
 
 
