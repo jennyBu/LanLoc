@@ -9,24 +9,16 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.usi.lanloc.audio.RecordingActivity2;
 import com.example.usi.lanloc.db.AsyncResponse;
 import com.example.usi.lanloc.db.DatabaseActivity;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by Jennifer Busta on 07.12.17.

@@ -22,7 +22,6 @@
         <activity android:name=".MainActivity"/>
 
         <activity android:name=".audio.RecordingActivity"/>
-        <activity android:name=".audio.RecordingActivity2"/>
 
         <meta-data android:name="DATABASE" android:value="lanloc.db" />
         <meta-data android:name="VERSION" android:value="4" />

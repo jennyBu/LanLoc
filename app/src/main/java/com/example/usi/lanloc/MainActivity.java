@@ -1,12 +1,10 @@
 package com.example.usi.lanloc;
 
-import android.*;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.Settings;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
@@ -27,9 +25,8 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 
 
-import com.example.usi.lanloc.audio.RecordingActivity2;
+import com.example.usi.lanloc.audio.RecordingActivity;
 
-import java.io.IOException;
 import java.util.Random;
 
 import static android.Manifest.permission.RECORD_AUDIO;
@@ -155,10 +152,10 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this, "Start recording",
                                 Toast.LENGTH_LONG).show();*/
 
-                        Intent RecordingActivity2 = new Intent(MainActivity.this, RecordingActivity2.class);
+                        Intent RecordingActivity2 = new Intent(MainActivity.this, RecordingActivity.class);
 
 
-                        //     startActivity(new Intent(MainActivity.this, RecordingActivity2.class));
+                        //     startActivity(new Intent(MainActivity.this, RecordingActivity.class));
                         startActivity(RecordingActivity2);
 
 /*                    } else {
@@ -174,12 +171,12 @@ public class MainActivity extends AppCompatActivity {
 
                     mediaRecorder.stop();
 
-                    Intent RecordingActivity2 = new Intent(MainActivity.this, RecordingActivity2.class);
-                    RecordingActivity2.putExtra("AudioSavePathInDevice", AudioSavePathInDevice);
-                    RecordingActivity2.putExtra("AudioSavePathInDevice1", AudioSavePathInDevice1);
+                    Intent RecordingActivity = new Intent(MainActivity.this, RecordingActivity.class);
+                    RecordingActivity.putExtra("AudioSavePathInDevice", AudioSavePathInDevice);
+                    RecordingActivity.putExtra("AudioSavePathInDevice1", AudioSavePathInDevice1);
 
-                    //     startActivity(new Intent(MainActivity.this, RecordingActivity2.class));
-                    startActivity(RecordingActivity2);
+                    //     startActivity(new Intent(MainActivity.this, RecordingActivity.class));
+                    startActivity(RecordingActivity);
                     // The toggle is disabled*/
                 }
             }

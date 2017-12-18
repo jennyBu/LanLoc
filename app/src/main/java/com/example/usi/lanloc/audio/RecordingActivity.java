@@ -1,23 +1,37 @@
 package com.example.usi.lanloc.audio;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
-
 import android.os.AsyncTask;
-import android.os.Environment;
-import android.support.v7.app.AppCompatActivity;
-
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-
-import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
-import java.io.DataInputStream;
+import com.example.usi.lanloc.GlobalVars;
+import com.example.usi.lanloc.MainActivity;
+import com.example.usi.lanloc.R;
+import com.example.usi.lanloc.db.AsyncResponse;
+import com.example.usi.lanloc.db.DatabaseActivity;
+
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -27,16 +41,13 @@ import java.util.Random;
 import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
-import android.support.v4.app.ActivityCompat;
-import android.content.pm.PackageManager;
-import android.support.v4.content.ContextCompat;
-
-import com.example.usi.lanloc.R;
 
 public class RecordingActivity extends AppCompatActivity {
 
-    Button buttonStart, buttonStop, buttonPlayLastRecordAudio,
-            buttonStopPlayingRecording ;
+    //  Button buttonStart, buttonStop, buttonPlayLastRecordAudio,
+//            buttonStopPlayingRecording ;
+    public String AudioSavePathInDevice2 = null;
+    public String AudioSavePathInDevice3 = null;
     String AudioSavePathInDevice = null;
     String AudioSavePathInDevice1 = null;
     MediaRecorder mediaRecorder ;
@@ -45,30 +56,252 @@ public class RecordingActivity extends AppCompatActivity {
     public static final int RequestPermissionCode = 1;
     MediaPlayer mediaPlayer ;
 
+    ImageView recordview;
+    ImageView playview;
+    ImageView pauseview;
+    ImageView uploadview;
+    ImageView backview;
+    ImageView speaker;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.audio);
-
-        buttonStart = (Button) findViewById(R.id.button);
-        buttonStop = (Button) findViewById(R.id.button2);
-        buttonPlayLastRecordAudio = (Button) findViewById(R.id.button3);
-        buttonStopPlayingRecording = (Button)findViewById(R.id.button4);
-
-        buttonStop.setEnabled(false);
-        buttonPlayLastRecordAudio.setEnabled(false);
-        buttonStopPlayingRecording.setEnabled(false);
+        setContentView(R.layout.activity_recording);
 
         random = new Random();
 
-        buttonStart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        if (getIntent().getExtras() != null) {
+            AudioSavePathInDevice = getIntent().getStringExtra("AudioSavePathInDevice");
+            AudioSavePathInDevice1 = getIntent().getStringExtra("AudioSavePathInDevice1");
+        }
 
-                if(checkPermission()) {
+     //   recordview = (ImageView) findViewById(R.id.record_icon);
+        pauseview = (ImageView) findViewById(R.id.pause_icon);
+        playview = (ImageView) findViewById(R.id.play_icon);
+        backview = (ImageView) findViewById(R.id.back_icon);
+        uploadview = (ImageView) findViewById(R.id.upload_icon);
+        speaker = (ImageView) findViewById(R.id.imageView);
+
+
+        AudioSavePathInDevice3= CreateRandomAudioFileName(5) + "AudioRecording.3gp";
+        AudioSavePathInDevice2 =
+                Environment.getExternalStorageDirectory().getAbsolutePath() + "/" +
+                        AudioSavePathInDevice3;
+        AudioSavePathInDevice = AudioSavePathInDevice2;
+        AudioSavePathInDevice1 = AudioSavePathInDevice3;
+
+        MediaRecorderReady();
+
+        try {
+            mediaRecorder.prepare();
+            mediaRecorder.start();
+        } catch (IllegalStateException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        Toast.makeText(RecordingActivity.this, "Start recording",
+                Toast.LENGTH_LONG).show();
+
+
+
+
+
+
+
+
+        backview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //        Toast.makeText(MainActivity.this, "Recording",
+                //              Toast.LENGTH_LONG).show();
+//                startActivity(new Intent(MainActivity.this, RecordingActivity.class));
+                startActivity(new Intent(RecordingActivity.this, MainActivity.class));
+
+            }
+        });
+
+        playview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                mediaPlayer = new MediaPlayer();
+                try {
+                    mediaPlayer.setDataSource(AudioSavePathInDevice);
+                    mediaPlayer.prepare();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                mediaPlayer.start();
+                Toast.makeText(RecordingActivity.this, "Playing",
+                        Toast.LENGTH_LONG).show();
+            }
+        });
+
+
+
+
+        uploadview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //        Toast.makeText(MainActivity.this, "Recording",
+                //              Toast.LENGTH_LONG).show();
+//                startActivity(new Intent(MainActivity.this, RecordingActivity.class));
+                doFileUpload();
+                addToDatabase();
+                startActivity(new Intent(RecordingActivity.this, MainActivity.class));
+                //TODO go here back to last fragment in mainactivity (or is this already happening?)
+                //TODO remove from php file not used functions and put php file to server
+              //  new UploadFileAsync().execute("");
+            }
+        });
+
+
+
+
+        ToggleButton toggle = (ToggleButton) findViewById(R.id.toggle);
+        toggle.setChecked(true);
+        speaker.setImageResource(R.drawable.ic_speaker_orange_big);
+        toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+
+                    speaker.setImageResource(R.drawable.ic_speaker_orange_big);
+
+                    if (checkPermission()) {
+
+                        AudioSavePathInDevice3= CreateRandomAudioFileName(5) + "AudioRecording.3gp";
+                        AudioSavePathInDevice2 =
+                                Environment.getExternalStorageDirectory().getAbsolutePath() + "/" +
+                                        AudioSavePathInDevice3;
+                        AudioSavePathInDevice = AudioSavePathInDevice2;
+                        AudioSavePathInDevice1 = AudioSavePathInDevice3;
+
+                        MediaRecorderReady();
+
+                        try {
+                            mediaRecorder.prepare();
+                            mediaRecorder.start();
+                        } catch (IllegalStateException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+
+                        Toast.makeText(RecordingActivity.this, "Start recording",
+                                Toast.LENGTH_LONG).show();
+
+
+
+                    } else {
+                        requestPermission();
+                    }
+
+
+                    // The toggle is enabled
+                } else {
+                    speaker.setImageResource(R.drawable.ic_speaker_big);
+                    Toast.makeText(RecordingActivity.this, "Stop recording",
+                            Toast.LENGTH_LONG).show();
+
+                    mediaRecorder.stop();
+
+                    AudioSavePathInDevice = AudioSavePathInDevice2;
+                    AudioSavePathInDevice1 = AudioSavePathInDevice3;
+
+
+
+               /*     Intent RecordingActivity = new Intent(RecordingActivity.this, RecordingActivity.class);
+                    RecordingActivity.putExtra("AudioSavePathInDevice", AudioSavePathInDevice);
+                    RecordingActivity.putExtra("AudioSavePathInDevice1", AudioSavePathInDevice1);*/
+
+                    //     startActivity(new Intent(MainActivity.this, RecordingActivity.class));
+                    // The toggle is disabled
+                }
+            }
+        });
+
+
+ /*       ToggleButton toggle = (ToggleButton) findViewById(R.id.toggle);
+        toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    Toast.makeText(RecordingActivity.this, "Start recording",
+                            Toast.LENGTH_LONG).show();
+
+
+                    // The toggle is enabled
+                } else {
+                    Toast.makeText(RecordingActivity.this, "Stop recording",
+                            Toast.LENGTH_LONG).show();
+
+                //    startActivity(new Intent(RecordingActivity.this, RecordingActivity.class));
+                    // The toggle is disabled
+                }
+            }
+        }); */
+
+
+  /*      ToggleButton toggle2 = (ToggleButton) findViewById(R.id.toggle);
+        toggle2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    Toast.makeText(RecordingActivity.this, "Start playing",
+                            Toast.LENGTH_LONG).show();
+
+                    mediaPlayer = new MediaPlayer();
+                    try {
+                        mediaPlayer.setDataSource(AudioSavePathInDevice);
+                        mediaPlayer.prepare();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    mediaPlayer.start();
+                    Toast.makeText(RecordingActivity.this, "Playing",
+                            Toast.LENGTH_LONG).show();
+
+
+
+                    // The toggle is enabled
+                } else {
+                    Toast.makeText(RecordingActivity.this, "Stop playing",
+                            Toast.LENGTH_LONG).show();
+
+                    if (mediaPlayer != null) {
+                        mediaPlayer.stop();
+                        mediaPlayer.release();
+                        MediaRecorderReady();
+                    }
+
+                    //     startActivity(new Intent(RecordingActivity.this, RecordingActivity.class));
+                    // The toggle is disabled
+                }
+            }
+        });*/
+
+
+
+
+
+
+  /*      recordview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //        Toast.makeText(MainActivity.this, "Recording",
+                //              Toast.LENGTH_LONG).show();
+//                startActivity(new Intent(MainActivity.this, RecordingActivity.class));
+                //       startActivity(new Intent(RecordingActivity.this, RecordingActivity.class));
+                if (checkPermission()) {
 
                     AudioSavePathInDevice1 = CreateRandomAudioFileName(5) + "AudioRecording.3gp";
-
 
                     AudioSavePathInDevice =
                             Environment.getExternalStorageDirectory().getAbsolutePath() + "/" +
@@ -87,8 +320,6 @@ public class RecordingActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
 
-                    buttonStart.setEnabled(false);
-                    buttonStop.setEnabled(true);
 
                     Toast.makeText(RecordingActivity.this, "Recording started",
                             Toast.LENGTH_LONG).show();
@@ -97,161 +328,330 @@ public class RecordingActivity extends AppCompatActivity {
                 }
 
             }
-        });
+        }); W*/
 
 
+    }
 
-        buttonStop.setOnClickListener(new View.OnClickListener() {
+    private void addToDatabase() {
+        DatabaseActivity asyncTask = new DatabaseActivity(new AsyncResponse() {
             @Override
-            public void onClick(View view) {
-                mediaRecorder.stop();
-                buttonStop.setEnabled(false);
-                buttonPlayLastRecordAudio.setEnabled(true);
-                buttonStart.setEnabled(true);
-                buttonStopPlayingRecording.setEnabled(false);
-
-                Toast.makeText(RecordingActivity.this, "Recording Completed",
-                        Toast.LENGTH_LONG).show();
-
-                new doFileUpload().execute();
-               // new doFileUpload(AudioSavePathInDevice).execute();
+            public void processFinish(Object output) {
 
             }
         });
 
-        buttonPlayLastRecordAudio.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) throws IllegalArgumentException,
-                    SecurityException, IllegalStateException {
 
-                buttonStop.setEnabled(false);
-                buttonStart.setEnabled(false);
-                buttonStopPlayingRecording.setEnabled(true);
+        //THIS GETS THE CURRENT GPS LOCATION AND TAGS IT TO THE VOICE RECORDING TO BE UPLOADED TO THE db.
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
 
-                mediaPlayer = new MediaPlayer();
-                try {
-                    mediaPlayer.setDataSource(AudioSavePathInDevice);
-                    mediaPlayer.prepare();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        Location l = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (l != null) {
+            asyncTask.addRecord(GlobalVars.ANDROID_ID, l.getLatitude(), l.getLongitude(), "uploads/"+ AudioSavePathInDevice);
 
-                mediaPlayer.start();
-                Toast.makeText(RecordingActivity.this, "Recording Playing",
-                        Toast.LENGTH_LONG).show();
-            }
-        });
+        } else {
+            System.out.println("Can't add recording, no previous location");
+        }
 
-        buttonStopPlayingRecording.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                buttonStop.setEnabled(false);
-                buttonStart.setEnabled(true);
-                buttonStopPlayingRecording.setEnabled(false);
-                buttonPlayLastRecordAudio.setEnabled(true);
-
-                if(mediaPlayer != null){
-                    mediaPlayer.stop();
-                    mediaPlayer.release();
-                    MediaRecorderReady();
-                }
-            }
-        });
+        //TODO pass here correct position and file path
+        //asyncTask.addRecord(GlobalVars.ANDROID_ID, 46.010475, 8.957006, "uploads/"+ AudioSavePathInDevice);
 
     }
 
 
-    public class doFileUpload extends AsyncTask<Void, Void, Void> {
 
-        @Override
-        protected Void doInBackground(Void... params) {
 
-            HttpURLConnection conn = null;
-            DataOutputStream dos = null;
-            DataInputStream inStream = null;
-            String existingFileName = AudioSavePathInDevice;
-            String lineEnd = "\r\n";
-            String twoHyphens = "--";
-            String boundary = "*****";
-            int bytesRead, bytesAvailable, bufferSize;
-            byte[] buffer;
-            int maxBufferSize = 1 * 1024 * 1024;
-            String responseFromServer = "";
-            String urlString = "http://uc-edu.mobile.usilu.net/RecordingActivity.php";
+    private void doFileUpload() {
 
-            try {
+        new AsyncTask<Void, Void, Void>() {
 
-                //------------------ CLIENT REQUEST
-                FileInputStream fileInputStream = new FileInputStream(new File(existingFileName));
-                // open a URL connection to the Servlet
-                URL url = new URL(urlString);
-                // Open a HTTP connection to the URL
-                conn = (HttpURLConnection) url.openConnection();
-                // Allow Inputs
-                conn.setDoInput(true);
-                // Allow Outputs
-                conn.setDoOutput(true);
-                // Don't use a cached copy.
-                conn.setUseCaches(false);
-                // Use a post method.
-                conn.setRequestMethod("POST");
-                conn.setRequestProperty("Connection", "Keep-Alive");
-                conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
-                dos = new DataOutputStream(conn.getOutputStream());
-                dos.writeBytes(twoHyphens + boundary + lineEnd);
-                dos.writeBytes("Content-Disposition: form-data; name=\"uploadedfile\";filename=\"" + existingFileName + "\"" + lineEnd);
-                dos.writeBytes(lineEnd);
-                // create a buffer of maximum size
-                bytesAvailable = fileInputStream.available();
-                bufferSize = Math.min(bytesAvailable, maxBufferSize);
-                buffer = new byte[bufferSize];
-                // read file and write it into form...
-                bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+            @Override
+            protected Void doInBackground(Void... params) {
+                //private void doFileUpload(){
+                HttpURLConnection conn = null;
+                DataOutputStream dos = null;
+                //DataInputStream inStream = null;
+                BufferedReader inStream = null;
 
-                while (bytesRead > 0) {
 
-                    dos.write(buffer, 0, bufferSize);
+                String lineEnd = "\r\n";
+              //  String lineEnd = "rn";
+                String twoHyphens = "--";
+                String boundary = "*****";
+                int bytesRead, bytesAvailable, bufferSize;
+                byte[] buffer;
+                int maxBufferSize = 1 * 1024 * 1024;
+                String responseFromServer = "";
+                Log.d("function", "this is the value of selected path" + AudioSavePathInDevice);
+                String urlString = "http://uc-edu.mobile.usilu.net/audio3.php";
+                try {
+                    //------------------ CLIENT REQUEST
+                    FileInputStream fileInputStream = new FileInputStream(new File(AudioSavePathInDevice));
+                    // open a URL connection to the Servlet
+                    URL url = new URL(urlString);
+                    // Open a HTTP connection to the URL
+                    conn = (HttpURLConnection) url.openConnection();
+                    // Allow Inputs
+                    conn.setDoInput(true);
+                    // Allow Outputs
+                    conn.setDoOutput(true);
+                    // Don't use a cached copy.
+                    conn.setUseCaches(false);
+                    // Use a post method.
+                    conn.setRequestMethod("POST");
+                    conn.setRequestProperty("Connection", "Keep-Alive");
+                    conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+                    conn.setRequestProperty("fileToUpload",AudioSavePathInDevice1);
+
+
+                    dos = new DataOutputStream(conn.getOutputStream());
+                    dos.writeBytes(twoHyphens + boundary + lineEnd);
+                    dos.writeBytes("Content-Disposition: form-data; name=\"fileToUpload\";filename=\"" + AudioSavePathInDevice1 + "\"" + lineEnd);
+
+                    //dos.writeBytes("Content-Disposition: form-data; name="uploadedfile";filename="" + selectedPath + """ + lineEnd);
+                    dos.writeBytes(lineEnd);
+                    // create a buffer of maximum size
                     bytesAvailable = fileInputStream.available();
                     bufferSize = Math.min(bytesAvailable, maxBufferSize);
+                    buffer = new byte[bufferSize];
+                    System.out.println(buffer);
+                    System.out.println(bufferSize);
+                    // read file and write it into form...
                     bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+                    while (bytesRead > 0) {
+                        dos.write(buffer, 0, bufferSize);
+                        bytesAvailable = fileInputStream.available();
+                        bufferSize = Math.min(bytesAvailable, maxBufferSize);
+                        bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+                    }
+                    // send multipart form data necesssary after file data...
+                    dos.writeBytes(lineEnd);
+                    dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
+                    // close streams
+                    Log.e("Debug", "File is written");
+                    Log.e("Debug",AudioSavePathInDevice1 );
 
+                    // TO DO  enter record on database with username, position and audio record path (AudiosavepathDevice). AudiosavepathDevice1 returns the audio filename only.
+
+
+                    int serverResponseCode = conn.getResponseCode();
+                    String serverResponseMessage = conn.getResponseMessage().toString();
+                    Log.i("joshtag", "HTTP Response is : "  + serverResponseMessage + ": " +  serverResponseCode);
+                    Log.i("joshtag", "HTTP Response is : "  + serverResponseMessage + ": " +  serverResponseCode);
+                    Log.i("joshtag", "HTTP Response is : "  + conn.getContent());
+
+
+                    fileInputStream.close();
+                    dos.flush();
+                    dos.close();
+
+
+
+                } catch (MalformedURLException ex) {
+                    Log.e("Debug", "error: " + ex.getMessage(), ex);
+                } catch (IOException ioe) {
+                    Log.e("Debug", "error: " + ioe.getMessage(), ioe);
                 }
+                //------------------ read the SERVER RESPONSE
 
-                // send multipart form data necesssary after file data...
-                dos.writeBytes(lineEnd);
-                dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
-                // close streams
-                Log.e("Debug", "File is written");
-                fileInputStream.close();
-                dos.flush();
-                dos.close();
 
-            } catch (MalformedURLException ex) {
-                Log.e("Debug", "error: " + ex.getMessage(), ex);
-            } catch (IOException ioe) {
-                Log.e("Debug", "error: " + ioe.getMessage(), ioe);
-            }
+           /*     try {
 
-            //------------------ read the SERVER RESPONSE
-            try {
+                //    inStream = new BufferedReader(conn.getInputStream());
+                //    BufferedReader inStream = new BufferedReader(conn.getInputStream());
+                 //    inStream = new DataInputStream(conn.getInputStream());
+                    String str;
 
-                inStream = new DataInputStream(conn.getInputStream());
-                String str;
-
-                while ((str = inStream.readLine()) != null) {
-
+                    while ((str = inStream.readLine()) != null) {
+                  //     while ((str = BufferedReader.readLine()) != null) {
                     Log.e("Debug", "Server Response " + str);
+                    }
+                    inStream.close();
+
+                } catch (IOException ioex) {
+                    Log.e("Debug", "error: " + ioex.getMessage(), ioex);
+                }*/
+
+
+
+
+                try{
+                    String inputLine;
+                    inStream = new BufferedReader(new FileReader(AudioSavePathInDevice));
+                    while ((inputLine = inStream.readLine()) != null) {
+                        System.out.println(inputLine);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    try {
+                        if (inStream != null) {
+                            inStream.close();
+                        }
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
 
                 }
 
-                inStream.close();
 
-            } catch (IOException ioex) {
-                Log.e("Debug", "error: " + ioex.getMessage(), ioex);
+
+
+
+
+                return null;
             }
-            return null;
-        }
+
+            protected void onPostExecute(Void feed) {
+
+            }
+
+        }.execute();
+
     }
+
+
+ /*   private class UploadFileAsync extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            try {
+                String sourceFileUri = AudioSavePathInDevice;
+                int serverResponseCode = 0;
+                HttpURLConnection conn = null;
+                DataOutputStream dos = null;
+                String lineEnd = "\r\n";
+                String twoHyphens = "--";
+                String boundary = "*****";
+                int bytesRead, bytesAvailable, bufferSize;
+                byte[] buffer;
+                int maxBufferSize = 1 * 1024 * 1024;
+                File sourceFile = new File(sourceFileUri);
+
+                if (sourceFile.isFile()) {
+
+                    try {
+                        String upLoadServerUri = "http://uc-edu.mobile.usilu.net/audio4.php";
+
+                        // open a URL connection to the Servlet
+                        FileInputStream fileInputStream = new FileInputStream(
+                                sourceFile);
+                        URL url = new URL(upLoadServerUri);
+
+                        // Open a HTTP connection to the URL
+                        conn = (HttpURLConnection) url.openConnection();
+                        conn.setDoInput(true); // Allow Inputs
+                        conn.setDoOutput(true); // Allow Outputs
+                        conn.setUseCaches(false); // Don't use a Cached Copy
+                        conn.setRequestMethod("POST");
+                        conn.setRequestProperty("Connection", "Keep-Alive");
+                        conn.setRequestProperty("ENCTYPE",
+                                "multipart/form-data");
+                        conn.setRequestProperty("Content-Type",
+                                "multipart/form-data;boundary=" + boundary);
+                        conn.setRequestProperty("bill", sourceFileUri);
+
+                        dos = new DataOutputStream(conn.getOutputStream());
+
+                        dos.writeBytes(twoHyphens + boundary + lineEnd);
+                        dos.writeBytes("Content-Disposition: form-data; name=\"bill\";filename=\""
+                                + sourceFileUri + "\"" + lineEnd);
+
+                        dos.writeBytes(lineEnd);
+
+                        // create a buffer of maximum size
+                        bytesAvailable = fileInputStream.available();
+
+                        bufferSize = Math.min(bytesAvailable, maxBufferSize);
+                        buffer = new byte[bufferSize];
+
+                        // read file and write it into form...
+                        bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+
+                        while (bytesRead > 0) {
+
+                            dos.write(buffer, 0, bufferSize);
+                            bytesAvailable = fileInputStream.available();
+                            bufferSize = Math
+                                    .min(bytesAvailable, maxBufferSize);
+                            bytesRead = fileInputStream.read(buffer, 0,
+                                    bufferSize);
+
+                        }
+
+                        // send multipart form data necesssary after file
+                        // data...
+                        dos.writeBytes(lineEnd);
+                        dos.writeBytes(twoHyphens + boundary + twoHyphens
+                                + lineEnd);
+
+                        // Responses from the server (code and message)
+                        serverResponseCode = conn.getResponseCode();
+                        String serverResponseMessage = conn
+                                .getResponseMessage();
+
+                        if (serverResponseCode == 200) {
+
+                            // messageText.setText(msg);
+                            //Toast.makeText(ctx, "File Upload Complete.",
+                            //      Toast.LENGTH_SHORT).show();
+
+                            // recursiveDelete(mDirectory1);
+
+                        }
+
+                        // close the streams //
+                        fileInputStream.close();
+                        dos.flush();
+                        dos.close();
+
+                    } catch (Exception e) {
+
+                        // dialog.dismiss();
+                        e.printStackTrace();
+
+                    }
+                    // dialog.dismiss();
+
+                } // End else block
+
+
+            } catch (Exception ex) {
+                // dialog.dismiss();
+
+                ex.printStackTrace();
+            }
+            return "Executed";
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+
+        }
+
+        @Override
+        protected void onPreExecute() {
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+        }
+    } */
+
+
+
 
 
 
