@@ -24,6 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:tabGravity="center"
+            app:tabBackground="@color/transparent_light_grey"
             app:tabIndicatorHeight="0dp"/>
         <!--app:tabBackground="@drawable/tab_selector"-->
 

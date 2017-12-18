@@ -101,8 +101,6 @@ public class NewestFragment extends ListFragment implements Observer {
         LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         Location l = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         if (l != null) {
-
-            // TODO pass here real position values
             if (GlobalVars.ALL_USER_MODE) {
                 asyncTask.getRecordsAroundPosition(l.getLatitude(), l.getLongitude(), 1000, "date", GlobalVars.ANDROID_ID, false);
             } else if (GlobalVars.SPECIFIC_USER_MODE) {
