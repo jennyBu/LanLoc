@@ -244,14 +244,7 @@ public class LanLocArrayAdapter extends ArrayAdapter<JSONObject> {
                     speakerView.setImageResource(R.drawable.ic_speaker);
                 } else {
                     try {
-                        //TODO fix db path here
                         mediaPlayer.setDataSource("http://uc-edu.mobile.usilu.net/" + path);
-                        /*
-                            String s = "manchester united (with nice players)";
-                            s = s.replace(" (with nice players)", "");
-                         */
-
-                        //mediaPlayer.setDataSource("http://uc-edu.mobile.usilu.net/uploads/EINPCAudioRecording.3gp");
                         mediaPlayer.prepare();
                     } catch (IOException e) {
                         e.printStackTrace();
