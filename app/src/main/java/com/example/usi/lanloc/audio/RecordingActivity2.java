@@ -107,6 +107,8 @@ public class RecordingActivity2 extends AppCompatActivity {
                 doFileUpload();
                 addToDatabase();
                 startActivity(new Intent(RecordingActivity2.this, MainActivity.class));
+                //TODO go here back to last fragment in mainactivity (or is this already happening?)
+                //TODO remove from php file not used functions and put php file to server
               //  new UploadFileAsync().execute("");
             }
         });
