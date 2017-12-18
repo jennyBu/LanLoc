@@ -217,7 +217,7 @@ public class LanLocArrayAdapter extends ArrayAdapter<JSONObject> {
     }
 
     private void handleAudio(JSONObject value, View rowView) throws JSONException {
-        final String path = value.getString("audio");
+        final String path = value.getString("audio").replace("/storage/emulated/0/","");
         final ImageView speakerView = (ImageView) rowView.findViewById(R.id.icon);
 
         speakerView.setOnClickListener(new View.OnClickListener() {
@@ -235,17 +235,23 @@ public class LanLocArrayAdapter extends ArrayAdapter<JSONObject> {
                     @Override
                     public void onCompletion(MediaPlayer mp) {
                         speakerView.setImageResource(R.drawable.ic_speaker);
+                        mediaPlayer.reset();
                     }
                 });
-                
+
                 if(mediaPlayer.isPlaying()){
                     mediaPlayer.reset();
                     speakerView.setImageResource(R.drawable.ic_speaker);
                 } else {
                     try {
                         //TODO fix db path here
-                        //mediaPlayer.setDataSource("http://uc-edu.mobile.usilu.net/" + path);
-                        mediaPlayer.setDataSource("http://uc-edu.mobile.usilu.net/uploads/EINPCAudioRecording.3gp");
+                        mediaPlayer.setDataSource("http://uc-edu.mobile.usilu.net/" + path);
+                        /*
+                            String s = "manchester united (with nice players)";
+                            s = s.replace(" (with nice players)", "");
+                         */
+
+                        //mediaPlayer.setDataSource("http://uc-edu.mobile.usilu.net/uploads/EINPCAudioRecording.3gp");
                         mediaPlayer.prepare();
                     } catch (IOException e) {
                         e.printStackTrace();
