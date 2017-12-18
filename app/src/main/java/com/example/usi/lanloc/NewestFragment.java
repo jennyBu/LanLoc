@@ -49,7 +49,6 @@ public class NewestFragment extends ListFragment implements Observer {
         return fragView;
     }
 
-
     @Override
     public void update(Observable o, Object arg) {
         createListItems();
@@ -77,24 +76,15 @@ public class NewestFragment extends ListFragment implements Observer {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-
-
-
                 }
             }
         });
 
         //TODO no dialog for granting position appears (needs to be done manually, otherwise it just stops here!)
+
         //THIS GETS THE CURRENT GPS LOCATION OF USER TO FIND VOICE RECORDING IN A 1000 RADIUS AROUND THAT IT.
         if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return;
         }
 
@@ -106,20 +96,8 @@ public class NewestFragment extends ListFragment implements Observer {
             } else if (GlobalVars.SPECIFIC_USER_MODE) {
                 asyncTask.getRecordsAroundPosition(l.getLatitude(), l.getLongitude(), 1000, "date", GlobalVars.ANDROID_ID, true);
             }
-
         } else {
             System.out.println("Can't add recording, no previous location");
         }
-
-        //TODO show message now records found here if no data is returned
-
-
-
-//        // TODO pass here real position values
-//        if (GlobalVars.ALL_USER_MODE) {
-//            asyncTask.getRecordsAroundPosition(46.010475, 8.957006, 1000, "date", GlobalVars.ANDROID_ID, false);
-//        } else if (GlobalVars.SPECIFIC_USER_MODE) {
-//            asyncTask.getRecordsAroundPosition(46.010475, 8.957006, 1000, "date", GlobalVars.ANDROID_ID, true);
-//        }
     }
 }
