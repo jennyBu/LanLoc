@@ -10,6 +10,7 @@ import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.text.DecimalFormat;
 import java.util.List;
 
 /**
@@ -120,8 +121,9 @@ public class DatabaseActivity extends AsyncTask<Object, Object, Object> {
      * @return all positions in the range of the distance around the current position
      */
     public Object getAllPositionsInRange(Double latitude, Double longitude, Integer distance) {
-        String lat = Double.toString(latitude);
-        String lon = Double.toString(longitude);
+        DecimalFormat df = new DecimalFormat("####.######");
+        String lat = df.format(latitude);
+        String lon = df.format(longitude);
         String dist = distance.toString();
 
         try {
@@ -145,8 +147,9 @@ public class DatabaseActivity extends AsyncTask<Object, Object, Object> {
      * @return all records in the range of the distance around the current position
      */
     public Object getRecordsAroundPosition(Double latitude, Double longitude, Integer distance, String order, String android_id, Boolean filterByUser) {
-        String lat = Double.toString(latitude);
-        String lon = Double.toString(longitude);
+        DecimalFormat df = new DecimalFormat("####.######");
+        String lat = df.format(latitude);
+        String lon = df.format(longitude);
         String dist = distance.toString();
 
         try {
@@ -203,8 +206,9 @@ public class DatabaseActivity extends AsyncTask<Object, Object, Object> {
      * @param path to the audio file on the server
      */
     public void addRecord(String androidId, Double latitude, Double longitude, String path) {
-        String lat = Double.toString(latitude);
-        String lon = Double.toString(longitude);
+        DecimalFormat df = new DecimalFormat("####.######");
+        String lat = df.format(latitude);
+        String lon = df.format(longitude);
 
         try {
             String data = URLEncoder.encode("method", "UTF-8") + "=" + URLEncoder.encode("addRecord", "UTF-8");
