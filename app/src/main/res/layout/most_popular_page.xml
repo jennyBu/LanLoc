@@ -13,4 +13,12 @@
         android:layout_weight="1"
         android:drawSelectorOnTop="false"/>
 
+    <TextView android:id="@id/android:empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:padding="25px"
+        android:background="#FFFFFF"
+        android:text="No records available around your corrent location. Be the first one to leave a voice comment!"/>
+
 </android.support.constraint.ConstraintLayout>
