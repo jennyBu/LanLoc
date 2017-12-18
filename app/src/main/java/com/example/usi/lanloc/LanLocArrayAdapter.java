@@ -36,6 +36,8 @@ public class LanLocArrayAdapter extends ArrayAdapter<JSONObject> {
         super(context, -1, values);
         this.context = context;
         this.values = values;
+        this.mediaPlayer = new MediaPlayer();
+
     }
 
     @Override
@@ -222,7 +224,6 @@ public class LanLocArrayAdapter extends ArrayAdapter<JSONObject> {
             @Override
             public void onClick(View v) {
 
-                mediaPlayer = new MediaPlayer();
                 mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                     @Override
                     public void onPrepared(MediaPlayer mp) {
@@ -236,33 +237,23 @@ public class LanLocArrayAdapter extends ArrayAdapter<JSONObject> {
                         speakerView.setImageResource(R.drawable.ic_speaker);
                     }
                 });
+                
+                if(mediaPlayer.isPlaying()){
+                    mediaPlayer.reset();
+                    speakerView.setImageResource(R.drawable.ic_speaker);
+                } else {
+                    try {
+                        //TODO fix db path here
+                        //mediaPlayer.setDataSource("http://uc-edu.mobile.usilu.net/" + path);
+                        mediaPlayer.setDataSource("http://uc-edu.mobile.usilu.net/uploads/EINPCAudioRecording.3gp");
+                        mediaPlayer.prepare();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 
-                try {
-                    //mediaPlayer.setDataSource("http://uc-edu.mobile.usilu.net/" + path);
-                  //     mediaPlayer.setDataSource("http://uc-edu.mobile.usilu.net/uploads/JBMPEAudioRecording.3gp");
-                    mediaPlayer.setDataSource("http://uc-edu.mobile.usilu.net/uploads/ECNKAAudioRecording.3gp");
-                    // TO MODIFY WITH PROPER PATH
-                    mediaPlayer.prepare();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    mediaPlayer.start();
                 }
-
-                mediaPlayer.start();
-
-
-         /*       Integer upVotesCount = Integer.parseInt(upVotes);
-                upVotesCount++;
-                upVoteTextView.setText(upVotesCount.toString()); */
-
-        /*        DatabaseActivity asyncTask = new DatabaseActivity(new AsyncResponse() {
-                    @Override
-                    public void processFinish(Object output) { }
-                });
-                asyncTask.voteRecordUp(id); */
             }
         });
-
-
-        // TODO on click listener + possibility to play back
     }
 }
