@@ -70,6 +70,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
 
     public MapFragment() {
         super();
+        this.mediaPlayer = new MediaPlayer();
     }
 
 
@@ -94,7 +95,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
 
     @Override
     public void update(Observable o, Object arg) {
-
+        createAllMarkers();
     }
 
     //    private Location getLastKnownLocation(){
@@ -137,10 +138,12 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
 //    }
 
     public void onMapReady(GoogleMap googleMap) {
-
         googleMapInstance = googleMap;
 
+        createAllMarkers();
+    }
 
+    private void createAllMarkers() {
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -159,7 +162,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         if (l != null) {
             LatLng ll = new LatLng(l.getLatitude(), l.getLongitude());
 
-            googleMapInstance.addMarker(new MarkerOptions().position(ll));
+            //googleMapInstance.addMarker(new MarkerOptions().position(ll));
             googleMapInstance.moveCamera(CameraUpdateFactory.newLatLngZoom(ll, 16f));
 
             //Custom marker added
@@ -252,26 +255,27 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
     @Override
     public boolean onMarkerClick(final Marker marker) {
         LatLng position = marker.getPosition();
-        final String path = paths.get(position);//value.getString("audio").replace("/storage/emulated/0/","");
+        final String path = paths.get(position).replace("/storage/emulated/0/","");//value.getString("audio").replace("/storage/emulated/0/","");
 
                 mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                     @Override
                     public void onPrepared(MediaPlayer mp) {
-                        //marker.setImageResource(R.drawable.ic_speaker_orange);
+                        marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_speaker_orange));
                     }
                 });
 
                 mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                     @Override
                     public void onCompletion(MediaPlayer mp) {
-                        //marker.setImageResource(R.drawable.ic_speaker);
+                        marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_speaker));
+
                         mediaPlayer.reset();
                     }
                 });
 
                 if(mediaPlayer.isPlaying()){
                     mediaPlayer.reset();
-                    //marker.setImageResource(R.drawable.ic_speaker);
+                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_speaker));
                 } else {
                     try {
                         mediaPlayer.setDataSource("http://uc-edu.mobile.usilu.net/" + path);
