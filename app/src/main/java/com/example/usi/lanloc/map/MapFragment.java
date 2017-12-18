@@ -5,6 +5,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.InflateException;
@@ -27,6 +28,7 @@ import java.util.Observer;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
+import android.widget.ImageView;
 
 import com.example.usi.lanloc.db.AsyncResponse;
 import com.example.usi.lanloc.db.DatabaseActivity;
@@ -37,6 +39,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 
@@ -52,13 +55,14 @@ import static android.content.Context.LOCATION_SERVICE;
  * Created by Jennifer Busta on 06.12.17.
  */
 
-public class MapFragment extends Fragment implements Observer, OnMapReadyCallback {
+public class MapFragment extends Fragment implements Observer, OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
 
     private static View fragView;
     private GoogleMap googleMapInstance;
     LocationManager locationManager;
     public LanLocArrayAdapter mAdapter;
+    MediaPlayer mediaPlayer;
 
 
     public MapFragment() {
@@ -130,9 +134,9 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
 //    }
 
     public void onMapReady(GoogleMap googleMap) {
-        System.out.println("I AM RIGHT HERE really");
 
         googleMapInstance = googleMap;
+
 
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -153,7 +157,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
             LatLng ll = new LatLng(l.getLatitude(), l.getLongitude());
 
             googleMapInstance.addMarker(new MarkerOptions().position(ll));
-            googleMapInstance.moveCamera(CameraUpdateFactory.newLatLngZoom(ll,16f));
+            googleMapInstance.moveCamera(CameraUpdateFactory.newLatLngZoom(ll, 16f));
 
             //Custom marker added
             //putMarker(ll);
@@ -162,8 +166,6 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         }
 
 
-
-        System.out.println("I AM RIGHT HERE at database");
         DatabaseActivity asyncTask = new DatabaseActivity(new AsyncResponse() {
             @Override
             public void processFinish(Object output) {
@@ -181,12 +183,14 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
                             //                        System.out.println(Arrays.toString(jsn));
 
                             final double latitude = jsn.getDouble("latitude");
-                            final double longitude  = jsn.getDouble("longitude");
+                            final double longitude = jsn.getDouble("longitude");
 
                             LatLng lalo = new LatLng(latitude, longitude);
                             System.out.println(lalo);
 
-                            putMarker(lalo);
+                            final String path = jsn.getString("audio");
+
+                            putMarker(lalo, path);
 
 
                         }
@@ -202,8 +206,6 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         });
 
 
-
-
         if (l != null) {
             if (GlobalVars.ALL_USER_MODE) {
                 asyncTask.getRecordsAroundPosition(l.getLatitude(), l.getLongitude(), 1000, "date", GlobalVars.ANDROID_ID, false);
@@ -214,87 +216,15 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         } else {
             System.out.println("Can't add recording, no previous location");
         }
-
-
-
-
-
-
-
-        //Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-//        double latitude = location.getLatitude();
-//        double longitude = location.getLatitude();
-//
-//        LatLng  latLng = new LatLng(latitude, longitude);
-//        //Instantiate the class, Geocoder
-//        //Geocoder geocoder = new Geocoder(getApplicationContext());
-//
-//
-//        //List<Address> addessList = geocoder.getFromLocation(latitude, longitude, 1);
-////        String str = addessList.get(0).getLocality()+",";
-////        str += addessList.get(0).getCountryName();
-//        googleMap.addMarker(new MarkerOptions().position(latLng));
-//        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10.2f));
-
-        // Add a marker in Sydney and move the camera
-        //LatLng sydney = new LatLng(-34, 151);
-        //putMarker(sydney, "Marker in Sydney");
     }
-        //TODO I NEED TO GET THE COORDINATES OF EACH VOICE RECORDS FROM THE ARRAY, HOW?
-//    private void createListItems() {
-//        DatabaseActivity asyncTask = new DatabaseActivity(new AsyncResponse() {
-//            @Override
-//            public void processFinish(Object output) {
-//                if (output.getClass().equals(JSONArray.class)) {
-//                    try {
-//                        JSONArray jsonArray = (JSONArray) output;
-//                        JSONObject records[] = new JSONObject[jsonArray.length()];
-//                        for (int i = 0; i < jsonArray.length(); i++) {
-//                            records[i] = jsonArray.getJSONObject(i);
-//                        }
-//
-//                        mAdapter = new LanLocArrayAdapter(getActivity(), R.layout.lanloc_list_item, records);
-//                        setListAdapter(mAdapter);
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//        });
 
 
-//========================
-//    public MapFragment(Context context, int lanloc_list_item, JSONObject[] values) {
-//
-//    }
-//
-//    public void markersinmap (JSONObject value, JSONObject[] values, final Integer id) throws JSONException {
-//        final String la = value.getString("latitude");
-//        final String lo = value.getString("longitude");
-//
-//
-//        LatLng lalo = LatLng(double la, double lo);
-//
-//        putMarker(lalo);
-//
-//
-//    }
-
-
-
-
-
-
-//==================
-
-    public void loadMarkers(LatLng currentLoc) {
-        // you call db provider to get you list of locations
-    }
+//=============================
+//LOAD CUSTOM MARKER FUNCTION
 
     //Puts custom voice record markets
     //public void putMarker(LatLng loc, String title) {
-    public void putMarker(LatLng loc) {
+    public void putMarker(LatLng loc, String path) {
         if (googleMapInstance == null) {
             return;
         }
@@ -302,7 +232,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         MarkerOptions options = new MarkerOptions()
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_speaker))
                 .position(loc);
-
+        googleMapInstance.setOnMarkerClickListener(this);
         googleMapInstance.addMarker(options);
         //googleMapInstance.moveCamera(CameraUpdateFactory.newLatLngZoom(loc,16f));
         //googleMapInstance.moveCamera(CameraUpdateFactory.newLatLng(loc));
@@ -314,6 +244,39 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
 //        //googleMapInstance.moveCamera(CameraUpdateFactory.newLatLng(loc));
     }
 
+    @Override
+    public boolean onMarkerClick(final Marker marker) {
+        final String path = "uploads/IEMJLAudioRecording.3gp";//value.getString("audio").replace("/storage/emulated/0/","");
 
+                mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                    @Override
+                    public void onPrepared(MediaPlayer mp) {
+                        //marker.setImageResource(R.drawable.ic_speaker_orange);
+                    }
+                });
 
+                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mp) {
+                        //marker.setImageResource(R.drawable.ic_speaker);
+                        mediaPlayer.reset();
+                    }
+                });
+
+                if(mediaPlayer.isPlaying()){
+                    mediaPlayer.reset();
+                    //marker.setImageResource(R.drawable.ic_speaker);
+                } else {
+                    try {
+                        mediaPlayer.setDataSource("http://uc-edu.mobile.usilu.net/" + path);
+                        mediaPlayer.prepare();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    mediaPlayer.start();
+                }
+
+        return false;
+    }
 }
