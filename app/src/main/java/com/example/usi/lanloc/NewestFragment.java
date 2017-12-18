@@ -113,6 +113,7 @@ public class NewestFragment extends ListFragment implements Observer {
             System.out.println("Can't add recording, no previous location");
         }
 
+        //TODO show message now records found here if no data is returned
 
 
 
