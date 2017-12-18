@@ -12,10 +12,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.usi.lanloc.GlobalVars;
 import com.example.usi.lanloc.LanLocArrayAdapter;
 import com.example.usi.lanloc.R;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -128,7 +130,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
 //    }
 
     public void onMapReady(GoogleMap googleMap) {
-        System.out.println("I AM RIGHT HERE");
+        System.out.println("I AM RIGHT HERE really");
 
         googleMapInstance = googleMap;
 
@@ -158,6 +160,66 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         } else {
             System.out.println("NO PREVIOUS LOCATION");
         }
+
+
+
+        System.out.println("I AM RIGHT HERE at database");
+        DatabaseActivity asyncTask = new DatabaseActivity(new AsyncResponse() {
+            @Override
+            public void processFinish(Object output) {
+                if (output.getClass().equals(JSONArray.class)) {
+                    try {
+                        JSONArray jsonArray = (JSONArray) output;
+                        //JSONObject records[] = new JSONObject[jsonArray.length()];
+
+                        // final int latitude, longitude = JSONObject("latitude");
+                        for (int i = 0; i < jsonArray.length(); ++i) {
+                            System.out.println("I AM RIGHT HERE in the loop");
+
+                            JSONObject jsn = jsonArray.getJSONObject(i);
+                            System.out.println("!!!!!!!!!!!!THIS IS THE DATA BASE ARRAY!!!!!!!! ");
+                            //                        System.out.println(Arrays.toString(jsn));
+
+                            final double latitude = jsn.getDouble("latitude");
+                            final double longitude  = jsn.getDouble("longitude");
+
+                            LatLng lalo = new LatLng(latitude, longitude);
+                            System.out.println(lalo);
+
+                            putMarker(lalo);
+
+
+                        }
+
+
+                        // mAdapter = new LanLocArrayAdapter(getActivity(), R.layout.lanloc_list_item, records);
+                        // setListAdapter(mAdapter);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
+
+
+
+        if (l != null) {
+            if (GlobalVars.ALL_USER_MODE) {
+                asyncTask.getRecordsAroundPosition(l.getLatitude(), l.getLongitude(), 1000, "date", GlobalVars.ANDROID_ID, false);
+            } else if (GlobalVars.SPECIFIC_USER_MODE) {
+                asyncTask.getRecordsAroundPosition(l.getLatitude(), l.getLongitude(), 1000, "date", GlobalVars.ANDROID_ID, true);
+            }
+
+        } else {
+            System.out.println("Can't add recording, no previous location");
+        }
+
+
+
+
+
+
 
         //Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
@@ -218,39 +280,7 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
 //
 //
 //    }
-    DatabaseActivity asyncTask = new DatabaseActivity(new AsyncResponse() {
-        @Override
-        public void processFinish(Object output) {
-            if (output.getClass().equals(JSONArray.class)) {
-                try {
-                    JSONArray jsonArray = (JSONArray) output;
-                    JSONObject records[] = new JSONObject[jsonArray.length()];
 
-
-                       // final int latitude, longitude = JSONObject("latitude");
-                    for (int i = 0; i < jsonArray.length(); ++i) {
-
-                        JSONObject jsn = jsonArray.getJSONObject(i);
-
-                        final int latitude = jsn.getInt("latitude");
-                        final int longitude  = jsn.getInt("longitude");
-
-                        LatLng lalo = new LatLng(latitude, longitude);
-
-                        putMarker(lalo);
-
-
-                    }
-
-
-                   // mAdapter = new LanLocArrayAdapter(getActivity(), R.layout.lanloc_list_item, records);
-                   // setListAdapter(mAdapter);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    });
 
 
 
