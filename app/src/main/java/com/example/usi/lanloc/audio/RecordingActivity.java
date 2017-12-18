@@ -127,9 +127,20 @@ public class RecordingActivity extends AppCompatActivity {
         playview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
                 mediaPlayer = new MediaPlayer();
+                mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                    @Override
+                    public void onPrepared(MediaPlayer mp) {
+                        speaker.setImageResource(R.drawable.ic_speaker_orange_big);
+                    }
+                });
+
+                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mp) {
+                        speaker.setImageResource(R.drawable.ic_speaker_big);
+                    }
+                });
                 try {
                     mediaPlayer.setDataSource(AudioSavePathInDevice);
                     mediaPlayer.prepare();
@@ -145,7 +156,7 @@ public class RecordingActivity extends AppCompatActivity {
 
 
 
-
+        //TODO: why do I always have to click twice here??
         uploadview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -166,7 +177,7 @@ public class RecordingActivity extends AppCompatActivity {
 
         ToggleButton toggle = (ToggleButton) findViewById(R.id.toggle);
         toggle.setChecked(true);
-        speaker.setImageResource(R.drawable.ic_speaker_orange_big);
+        //speaker.setImageResource(R.drawable.ic_speaker_orange_big);
         toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {

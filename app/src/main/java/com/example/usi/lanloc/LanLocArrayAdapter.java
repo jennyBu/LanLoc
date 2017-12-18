@@ -216,17 +216,31 @@ public class LanLocArrayAdapter extends ArrayAdapter<JSONObject> {
 
     private void handleAudio(JSONObject value, View rowView) throws JSONException {
         final String path = value.getString("audio");
-        ImageView speakerView = (ImageView) rowView.findViewById(R.id.icon);
+        final ImageView speakerView = (ImageView) rowView.findViewById(R.id.icon);
 
         speakerView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 mediaPlayer = new MediaPlayer();
-                try {
-                    mediaPlayer.setDataSource("http://uc-edu.mobile.usilu.net/" + path);
-                  //     mediaPlayer.setDataSource("http://uc-edu.mobile.usilu.net/uploads/JBMPEAudioRecording.3gp");
+                mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                    @Override
+                    public void onPrepared(MediaPlayer mp) {
+                        speakerView.setImageResource(R.drawable.ic_speaker_orange);
+                    }
+                });
 
+                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mp) {
+                        speakerView.setImageResource(R.drawable.ic_speaker);
+                    }
+                });
+
+                try {
+                    //mediaPlayer.setDataSource("http://uc-edu.mobile.usilu.net/" + path);
+                  //     mediaPlayer.setDataSource("http://uc-edu.mobile.usilu.net/uploads/JBMPEAudioRecording.3gp");
+                    mediaPlayer.setDataSource("http://uc-edu.mobile.usilu.net/uploads/ECNKAAudioRecording.3gp");
                     // TO MODIFY WITH PROPER PATH
                     mediaPlayer.prepare();
                 } catch (IOException e) {
