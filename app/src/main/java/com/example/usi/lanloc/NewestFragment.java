@@ -1,7 +1,13 @@
 package com.example.usi.lanloc;
 
+import android.*;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -70,11 +76,42 @@ public class NewestFragment extends ListFragment implements Observer {
             }
         });
 
-        // TODO pass here real position values
-        if (GlobalVars.ALL_USER_MODE) {
-            asyncTask.getRecordsAroundPosition(46.010475, 8.957006, 1000, "date", GlobalVars.ANDROID_ID, false);
-        } else if (GlobalVars.SPECIFIC_USER_MODE) {
-            asyncTask.getRecordsAroundPosition(46.010475, 8.957006, 1000, "date", GlobalVars.ANDROID_ID, true);
+        //THIS GETS THE CURRENT GPS LOCATION OF USER TO FIND VOICE RECORDING IN A 1000 RADIUS AROUND THAT IT.
+        if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
         }
+
+        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        Location l = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (l != null) {
+
+            // TODO pass here real position values
+            if (GlobalVars.ALL_USER_MODE) {
+                asyncTask.getRecordsAroundPosition(l.getLatitude(), l.getLongitude(), 1000, "date", GlobalVars.ANDROID_ID, false);
+            } else if (GlobalVars.SPECIFIC_USER_MODE) {
+                asyncTask.getRecordsAroundPosition(l.getLatitude(), l.getLongitude(), 1000, "date", GlobalVars.ANDROID_ID, true);
+            }
+
+        } else {
+            System.out.println("Can't add recording, no previous location");
+        }
+
+
+
+
+//        // TODO pass here real position values
+//        if (GlobalVars.ALL_USER_MODE) {
+//            asyncTask.getRecordsAroundPosition(46.010475, 8.957006, 1000, "date", GlobalVars.ANDROID_ID, false);
+//        } else if (GlobalVars.SPECIFIC_USER_MODE) {
+//            asyncTask.getRecordsAroundPosition(46.010475, 8.957006, 1000, "date", GlobalVars.ANDROID_ID, true);
+//        }
     }
 }

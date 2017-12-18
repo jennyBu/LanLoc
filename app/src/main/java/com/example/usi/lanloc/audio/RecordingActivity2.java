@@ -287,6 +287,8 @@ public class RecordingActivity2 extends AppCompatActivity {
             }
         });
 
+
+        //THIS GETS THE CURRENT GPS LOCATION AND TAGS IT TO THE VOICE RECORDING TO BE UPLOADED TO THE db.
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
