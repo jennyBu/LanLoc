@@ -2,8 +2,6 @@ package com.example.usi.lanloc;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.media.MediaPlayer;
-import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
@@ -25,17 +23,13 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 
-
 import com.example.usi.lanloc.audio.RecordingActivity;
-
-import java.util.Random;
 
 import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class MainActivity extends AppCompatActivity {
 
-    ImageView recordview;
     CollectionPagerAdapter collectionPagerAdapter;
     ViewPager viewPager;
 
@@ -44,32 +38,34 @@ public class MainActivity extends AppCompatActivity {
 
     public int MY_PERMISSIONS_REQUEST_LOCATION;
 
-    public String AudioSavePathInDevice = null;
-    public String AudioSavePathInDevice1 = null;
-
-    MediaRecorder mediaRecorder ;
-    Random random ;
-    String RandomAudioFileName = "ABCDEFGHIJKLMNOP";
     public static final int RequestPermissionCode = 1;
-    MediaPlayer mediaPlayer ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        GlobalVars.ANDROID_ID = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+
+        setUpViewPager();
+        setUpFooterActions();
+        setUpLocationService();
+    }
+
+    private void setUpViewPager() {
         collectionPagerAdapter = new CollectionPagerAdapter(getSupportFragmentManager());
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         viewPager.setAdapter(collectionPagerAdapter);
         GlobalVars.COLLECTION_PAGER_ADAPTER = collectionPagerAdapter;
 
-        GlobalVars.ANDROID_ID = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabDots);
         tabLayout.setupWithViewPager(viewPager, true);
+    }
 
+    private void setUpFooterActions() {
         final ImageView bubble = (ImageView) findViewById(R.id.bubble_icon);
         final ImageView user = (ImageView) findViewById(R.id.user_icon);
+        ToggleButton toggle = (ToggleButton) findViewById(R.id.toggle);
 
         bubble.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,115 +91,36 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-                //System.out.println("Location updated " + location);
-
-            }
-
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-
-            }
-
-            @Override
-            public void onProviderEnabled(String provider) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(String provider) {
-
-            }
-        };
-
-
-
-        random = new Random();
-
-        ToggleButton toggle = (ToggleButton) findViewById(R.id.toggle);
         toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-
-
-               /*     if(checkPermission()) {
-
-                        AudioSavePathInDevice1 = CreateRandomAudioFileName(5) + "AudioRecording.3gp";
-
-
-                        AudioSavePathInDevice =
-                                Environment.getExternalStorageDirectory().getAbsolutePath() + "/" +
-                                        AudioSavePathInDevice1;
-
-                        MediaRecorderReady();
-
-                        try {
-                            mediaRecorder.prepare();
-                            mediaRecorder.start();
-                        } catch (IllegalStateException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-
-                        Toast.makeText(MainActivity.this, "Start recording",
-                                Toast.LENGTH_LONG).show();*/
-
-                        Intent RecordingActivity2 = new Intent(MainActivity.this, RecordingActivity.class);
-
-
-                        //     startActivity(new Intent(MainActivity.this, RecordingActivity.class));
-                        startActivity(RecordingActivity2);
-
-/*                    } else {
-                        requestPermission();
-                    }
-
-
-
-                    // The toggle is enabled
-                } else {
-              /*      Toast.makeText(MainActivity.this, "Stop recording",
-                            Toast.LENGTH_LONG).show();
-
-                    mediaRecorder.stop();
-
-                    Intent RecordingActivity = new Intent(MainActivity.this, RecordingActivity.class);
-                    RecordingActivity.putExtra("AudioSavePathInDevice", AudioSavePathInDevice);
-                    RecordingActivity.putExtra("AudioSavePathInDevice1", AudioSavePathInDevice1);
-
-                    //     startActivity(new Intent(MainActivity.this, RecordingActivity.class));
-                    startActivity(RecordingActivity);
-                    // The toggle is disabled*/
+                    Intent recordingActivity = new Intent(MainActivity.this, RecordingActivity.class);
+                    startActivity(recordingActivity);
                 }
             }
         });
+    }
 
-
-
-
-      /*  recordview = (ImageView) findViewById(R.id.record_icon);
-
-        recordview.setOnClickListener(new View.OnClickListener() {
+    private void setUpLocationService() {
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locationListener = new LocationListener() {
             @Override
-            public void onClick(View v) {
-                //        Toast.makeText(MainActivity.this, "Recording",
-                //              Toast.LENGTH_LONG).show();
-                startActivity(new Intent(MainActivity.this, RecordingActivity.class));
+            public void onLocationChanged(Location location) {}
 
-            }
-        });  */
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+            @Override
+            public void onProviderEnabled(String provider) {}
+
+            @Override
+            public void onProviderDisabled(String provider) {}
+        };
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        System.out.println("RESUME");
         startUpdatingGPS();
     }
 
@@ -222,8 +139,6 @@ public class MainActivity extends AppCompatActivity {
                     ActivityCompat.requestPermissions(MainActivity.this,
                             new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
                             MY_PERMISSIONS_REQUEST_LOCATION);
-
-
                 }
             }).show();
 
@@ -238,15 +153,13 @@ public class MainActivity extends AppCompatActivity {
 
             return;
         }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
 
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
     }
 
     private void stopUpdatingGPS() {
         locationManager.removeUpdates(locationListener);
-
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -264,41 +177,16 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-
-
     private void updateFragments() {
         collectionPagerAdapter.updateFragments();
     }
 
-
-    public void MediaRecorderReady(){
-        mediaRecorder=new MediaRecorder();
-        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        mediaRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
-        mediaRecorder.setOutputFile(AudioSavePathInDevice);
-    }
-
-    public String CreateRandomAudioFileName(int string){
-        StringBuilder stringBuilder = new StringBuilder( string );
-        int i = 0 ;
-        while(i < string ) {
-            stringBuilder.append(RandomAudioFileName.
-                    charAt(random.nextInt(RandomAudioFileName.length())));
-
-            i++ ;
-        }
-        return stringBuilder.toString();
-    }
-
     private void requestPermission() {
-        ActivityCompat.requestPermissions(MainActivity.this, new
-                String[]{WRITE_EXTERNAL_STORAGE, RECORD_AUDIO}, RequestPermissionCode);
+        ActivityCompat.requestPermissions(MainActivity.this, new String[]{WRITE_EXTERNAL_STORAGE, RECORD_AUDIO}, RequestPermissionCode);
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case RequestPermissionCode:
                 if (grantResults.length> 0) {

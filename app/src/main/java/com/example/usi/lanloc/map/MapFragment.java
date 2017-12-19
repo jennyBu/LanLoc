@@ -116,8 +116,6 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
                         JSONArray jsonArray = (JSONArray) output;
 
                         for (int i = 0; i < jsonArray.length(); ++i) {
-                            System.out.println("I AM RIGHT HERE in the loop");
-
                             JSONObject jsn = jsonArray.getJSONObject(i);
 
                             final double latitude = jsn.getDouble("latitude");
