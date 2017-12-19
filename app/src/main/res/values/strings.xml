@@ -3,4 +3,5 @@
     <string name="most_popular_name"></string>
     <string name="newest_name"></string>
     <string name="map_name"></string>
+    <string name="msg">Please enable Location permission</string>
 </resources>

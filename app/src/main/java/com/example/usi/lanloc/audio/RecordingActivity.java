@@ -246,7 +246,7 @@ public class RecordingActivity extends AppCompatActivity {
                 int maxBufferSize = 1 * 1024 * 1024;
                 String responseFromServer = "";
                 Log.d("function", "this is the value of selected path" + AudioSavePathInDevice);
-                String urlString = "http://uc-edu.mobile.usilu.net/audio3.php";
+                String urlString = "http://uc-edu.mobile.usilu.net/audio.php";
                 try {
                     //------------------ CLIENT REQUEST
                     FileInputStream fileInputStream = new FileInputStream(new File(AudioSavePathInDevice));
