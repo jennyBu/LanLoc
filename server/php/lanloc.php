@@ -16,20 +16,6 @@ $method = null;
 if (isset($_POST["method"])){
         $method = $_POST["method"];
 }
-//if ($method === "getUserById") {
-//      $id = $_POST["id"];
-//      getUserById($con, $id);
-//} else if ($method === "getUserByAndroidId") {
-//      $android_id = $_POST["android_id"];
-//      getUserByAndroidId($con, $android_id);
-//} else if ($method === "getPositionId") {
-//      $latitude = $_POST["latitude"];
-//      $longitude = $_POST["longitude"];
-//      getPositionId($con, $latitude, $longitude);
-//} else if ($method == "getPositionById") {
-//      $id = $_POST["id"];
-//      getPositionById($con, $id);
-//}  else 
 if ($method === "addRecord") {
         $android_id = $_POST["android_id"];
         $latitude = $_POST["latitude"];
@@ -44,14 +30,6 @@ if ($method === "addRecord") {
         $record_id = $_POST["record"];
         $android_id = $_POST["android_id"];
         voteRecordDown($con, $record_id, $android_id);
-//} else if ($method === "getAllPositionsInRange") {
-//      $latitude = $_POST["latitude"];
-//        $longitude = $_POST["longitude"];
-//      $distance = $_POST["distance"];
-//      getAllPositionsInRange($con, $latitude, $longitude, $distance);
-//} else if ($method === "getRecordsForPositions") {
-//      $positions = $_POST["positions"];
-//      getRecordsForPositions($con, $positions, "default");
 } else if ($method === "getRecordsAroundPosition") {
         $latitude = $_POST["latitude"];
         $longitude = $_POST["longitude"];
@@ -59,19 +37,6 @@ if ($method === "addRecord") {
         $order = $_POST["order"];
         getRecordsAroundPosition($con, $latitude, $longitude, $distance, $order);
 }
-
-/*function getUserById($con, $id) {
-        $sql = "SELECT * FROM user WHERE id = '" . $id . "'";
-        $result = $con->query($sql);
-        $result_array = array();
-
-        if ($result->num_rows > 0) {
-                while($row = $result->fetch_assoc()) {
-                        $result_array[] = $row;
-                }
-        } 
-        echo json_encode($result_array);
-}*/
 
 function getUserByAndroidId($con, $android_id) {
         $sql = "SELECT * FROM user WHERE android_id = '" . $android_id . "'";
@@ -94,37 +59,6 @@ function addNewUser($con, $android_id) {
                 echo "failure";
         }
 }
-
-/*function getPositionId($con, $lat, $lon) {
-        $sql = "SELECT * FROM positions WHERE latitude  = '" . $lat . "' AND longitude = '" . $lon . "'";
-        $result = $con->query($sql);
-        $result_array = array();
-
-        if ($result->num_rows > 0) {
-                while($row = $result->fetch_assoc()) {
-                        $result_array[] = $row;
-                }
-        }  else {
-                addPosition($con, $lat, $lon);
-                getPositionId($con, $lat, $lon);
-        }
-
-        echo json_encode($result_array);
-}*/
-
-/*function getPositionById($con, $id) {
-        $sql = "SELECT * FROM positions WHERE id = '" . $id . "'";
-        $result = $con->query($sql);
-        $result_array = array();
-
-        if ($result->num_rows > 0) {
-                while($row = $result->fetch_assoc()) {
-                        $result_array[] = $row;
-                }
-        }
-
-        echo json_encode($result_array);
-}*/
 
 function addPosition($con, $lat, $lon) {
         $sql = "INSERT INTO positions (latitude, longitude) VALUES ('" . $lat .  "', '" . $lon . "')";
@@ -183,20 +117,6 @@ function voteRecordDown($con, $record_id, $android_id) {
 
         addVoteEntry($con, $record_id, $android_id);
 }
-
-/*function getAllPositionsInRange($con, $current_latitude, $current_longitude, $distance) {
-        $sql = "SELECT *,(((acos(sin(('" . $current_latitude . "'*pi()/180)) * sin((dest.latitude*pi()/180))+cos(('" . $current_latitude . "'*pi()/180))*cos((dest.latitude*pi()/180))*cos((('" . $current_longitude . "'-dest.longitude)*pi()/180))))*180/pi())*60*1.1515*1609.344) as distance  FROM positions AS dest HAVING distance < '" . $distance . "' ORDER BY distance ASC LIMIT 100";
-        $result = $con->query($sql);
-        $result_array = array();
-
-        if ($result->num_rows > 0) {
-                while($row = $result->fetch_assoc()) {
-                        $result_array[] = $row;
-                }
-        } 
-
-        echo json_encode($result_array);
-}*/
 
 function getUserStringByAndroidId($con, $android_id) {
         $sql = "SELECT * FROM user WHERE android_id = '" . $android_id . "'";
