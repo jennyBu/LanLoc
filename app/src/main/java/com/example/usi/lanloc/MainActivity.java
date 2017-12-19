@@ -1,5 +1,7 @@
 package com.example.usi.lanloc;
 
+import android.*;
+import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -22,8 +24,13 @@ import android.location.LocationManager;
 
 import com.example.usi.lanloc.audio.RecordingActivity;
 
+import static android.Manifest.permission.RECORD_AUDIO;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+
 public class MainActivity extends AppCompatActivity {
     public static final int PERMISSIONS_REQUEST_LOCATION = 0;
+    public static final int PERMISSIONS_REQUEST_RECORDING = 1;
+    public static final int PERMISSIONS_REQUEST_STORAGE = 2;
 
     CollectionPagerAdapter collectionPagerAdapter;
     ViewPager viewPager;
@@ -126,6 +133,16 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.RECORD_AUDIO}, PERMISSIONS_REQUEST_RECORDING);
+            return;
+        }
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST_STORAGE);
+            return;
+        }
+
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
     }
 
@@ -158,6 +175,10 @@ public class MainActivity extends AppCompatActivity {
         switch (requestCode) {
             case PERMISSIONS_REQUEST_LOCATION:
                 updateFragments();
+                break;
+            case PERMISSIONS_REQUEST_RECORDING:
+                break;
+            case PERMISSIONS_REQUEST_STORAGE:
                 break;
         }
     }
