@@ -50,6 +50,7 @@ public class MostPopularFragment extends ListFragment implements Observer {
     }
 
     private void createListItems() {
+        // Transform data from database to be able to be passed to LanLocArrayAdapter
         DatabaseActivity asyncTask = new DatabaseActivity(new AsyncResponse() {
             @Override
             public void processFinish(Object output) {
@@ -70,18 +71,15 @@ public class MostPopularFragment extends ListFragment implements Observer {
             }
         });
 
-        //THIS GETS THE CURRENT GPS LOCATION OF USER TO FIND VOICE RECORDING IN A 1000 RADIUS AROUND THAT IT
-        try{
         if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
-        }} catch (Exception e) {
-            String s = "s";
         }
 
         LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         Location l = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
+        // Get data from database in ALL_USER_MODE or SPECIFIC_USER_MODE
         if (l != null) {
             if (GlobalVars.ALL_USER_MODE) {
                 asyncTask.getRecordsAroundPosition(l.getLatitude(), l.getLongitude(), 1000, "default", GlobalVars.ANDROID_ID, false);

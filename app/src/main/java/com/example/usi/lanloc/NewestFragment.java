@@ -18,7 +18,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Arrays;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -45,13 +44,13 @@ public class NewestFragment extends ListFragment implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-
         if (this.isAdded()) {
             createListItems();
         }
     }
 
     private void createListItems() {
+        // Transform data from database to be able to be passed to LanLocArrayAdapter
         DatabaseActivity asyncTask = new DatabaseActivity(new AsyncResponse() {
 
             @Override
@@ -62,11 +61,7 @@ public class NewestFragment extends ListFragment implements Observer {
                         JSONObject records[] = new JSONObject[jsonArray.length()];
                         for (int i = 0; i < jsonArray.length(); i++) {
                             records[i] = jsonArray.getJSONObject(i);
-                            //prints the content of array records
                         }
-                        System.out.println("!!!!!!!!!!!!THIS IS THE DATA BASE ARRAY!!!!!!!! ");
-                        System.out.println(Arrays.toString(records));
-
 
                         mAdapter = new LanLocArrayAdapter(getActivity(), R.layout.lanloc_list_item, records);
                         setListAdapter(mAdapter);
@@ -77,30 +72,15 @@ public class NewestFragment extends ListFragment implements Observer {
             }
         });
 
-        //TODO no dialog for granting position appears (needs to be done manually, otherwise it just stops here!)
-
-        if (!isAdded()) {
-            System.out.print("############################NewestFragment not added yet");
-        } else {
-            System.out.print("############################NewestFragment added");
-        }
-
-        //THIS GETS THE CURRENT GPS LOCATION OF USER TO FIND VOICE RECORDING IN A 1000 RADIUS AROUND THAT IT.
-        try {
-            if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                    ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                return;
-            }
-        } catch (Exception e) {
-            String s = "s";
-        }
-        /*if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+        if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
-        }*/
+        }
 
         LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         Location l = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+        // Get data from database in ALL_USER_MODE or SPECIFIC_USER_MODE
         if (l != null) {
             if (GlobalVars.ALL_USER_MODE) {
                 asyncTask.getRecordsAroundPosition(l.getLatitude(), l.getLongitude(), 1000, "date", GlobalVars.ANDROID_ID, false);
