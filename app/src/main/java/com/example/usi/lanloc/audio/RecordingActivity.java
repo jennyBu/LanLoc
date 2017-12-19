@@ -153,8 +153,6 @@ public class RecordingActivity extends AppCompatActivity {
         toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    speaker.setImageResource(R.drawable.ic_speaker_orange_big);
-
                     if (checkPermission()) {
                         audioSavePathInDevice3 = createRandomAudioFileName(5) + "AudioRecording.3gp";
                         audioSavePathInDevice2 = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + audioSavePathInDevice3;
@@ -173,8 +171,6 @@ public class RecordingActivity extends AppCompatActivity {
                         }
                     }
                 } else {
-                    speaker.setImageResource(R.drawable.ic_speaker_big);
-
                     mediaRecorder.stop();
 
                     audioSavePathInDevice = audioSavePathInDevice2;
