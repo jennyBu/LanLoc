@@ -4,10 +4,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
@@ -15,7 +13,6 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import android.content.Context;
@@ -25,20 +22,13 @@ import android.location.LocationManager;
 
 import com.example.usi.lanloc.audio.RecordingActivity;
 
-import static android.Manifest.permission.RECORD_AUDIO;
-import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
-
 public class MainActivity extends AppCompatActivity {
+    public static final int PERMISSIONS_REQUEST_LOCATION = 0;
 
     CollectionPagerAdapter collectionPagerAdapter;
     ViewPager viewPager;
-
     LocationManager locationManager;
     LocationListener locationListener;
-
-    public int MY_PERMISSIONS_REQUEST_LOCATION;
-
-    public static final int RequestPermissionCode = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,25 +122,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void startUpdatingGPS() {
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-            Snackbar.make(findViewById(android.R.id.content), R.string.msg, Snackbar.LENGTH_INDEFINITE).setAction("GRANT", new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ActivityCompat.requestPermissions(MainActivity.this,
-                            new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                            MY_PERMISSIONS_REQUEST_LOCATION);
-                }
-            }).show();
-
-
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_LOCATION);
             return;
         }
 
@@ -181,37 +153,12 @@ public class MainActivity extends AppCompatActivity {
         collectionPagerAdapter.updateFragments();
     }
 
-    private void requestPermission() {
-        ActivityCompat.requestPermissions(MainActivity.this, new String[]{WRITE_EXTERNAL_STORAGE, RECORD_AUDIO}, RequestPermissionCode);
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
-            case RequestPermissionCode:
-                if (grantResults.length> 0) {
-                    boolean StoragePermission = grantResults[0] ==
-                            PackageManager.PERMISSION_GRANTED;
-                    boolean RecordPermission = grantResults[1] ==
-                            PackageManager.PERMISSION_GRANTED;
-
-                    if (StoragePermission && RecordPermission) {
-                        Toast.makeText(MainActivity.this, "Permission Granted",
-                                Toast.LENGTH_LONG).show();
-                    } else {
-                        Toast.makeText(MainActivity.this,"Permission Denied",Toast.LENGTH_LONG).show();
-                    }
-                }
+            case PERMISSIONS_REQUEST_LOCATION:
+                updateFragments();
                 break;
         }
-    }
-
-    public boolean checkPermission() {
-        int result = ContextCompat.checkSelfPermission(getApplicationContext(),
-                WRITE_EXTERNAL_STORAGE);
-        int result1 = ContextCompat.checkSelfPermission(getApplicationContext(),
-                RECORD_AUDIO);
-        return result == PackageManager.PERMISSION_GRANTED &&
-                result1 == PackageManager.PERMISSION_GRANTED;
     }
 }
