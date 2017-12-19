@@ -1,7 +1,6 @@
 package com.example.usi.lanloc.db;
 
 import android.os.AsyncTask;
-import android.provider.Settings;
 
 import org.json.JSONArray;
 import java.io.BufferedReader;
@@ -11,7 +10,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.text.DecimalFormat;
-import java.util.List;
 
 /**
  * Created by Jennifer Busta on 01.12.17.
@@ -60,86 +58,6 @@ public class DatabaseActivity extends AsyncTask<Object, Object, Object> {
 
     /**
      *
-     * @param androidId the device id of the phone
-     * @return the user id. If not already in database it is added and then returned.
-     */
-    public Object getUserByAndroidId(String androidId) {
-        try {
-            String data = URLEncoder.encode("method", "UTF-8") + "=" + URLEncoder.encode("getUserByAndroidId", "UTF-8");
-            data += "&" + URLEncoder.encode("android_id", "UTF-8") + "=" + URLEncoder.encode(androidId, "UTF-8");
-
-            return execute(data);
-        } catch (Exception e) {
-            return new String("Exception: " + e.getMessage());
-        }
-    }
-
-    /**
-     *
-     * @param latitude of the position to get
-     * @param longitude of the position to get
-     * @return the id of the position. If not already in database it is added and then returned.
-     */
-    public Object getPositionId(Double latitude, Double longitude) {
-        String lat = Double.toString(latitude);
-        String lon = Double.toString(longitude);
-
-        try {
-            String data = URLEncoder.encode("method", "UTF-8") + "=" + URLEncoder.encode("getPositionId", "UTF-8");
-            data += "&" + URLEncoder.encode("latitude", "UTF-8") + "=" + URLEncoder.encode(lat, "UTF-8");
-            data += "&" + URLEncoder.encode("longitude", "UTF-8") + "=" + URLEncoder.encode(lon, "UTF-8");
-
-            return execute(data);
-        } catch (Exception e) {
-            return new String("Exception: " + e.getMessage());
-        }
-    }
-
-    /**
-     *
-     * @param id of the position
-     * @return latitude and longitude of the position
-     */
-    public Object getPositionById(Integer id) {
-        String positionId = id.toString();
-
-        try {
-            String data = URLEncoder.encode("method", "UTF-8") + "=" + URLEncoder.encode("getPositionById", "UTF-8");
-            data += "&" + URLEncoder.encode("id", "UTF-8") + "=" + URLEncoder.encode(positionId, "UTF-8");
-
-            return execute(data);
-        } catch (Exception e) {
-            return new String("Exception: " + e.getMessage());
-        }
-    }
-
-    /**
-     *
-     * @param latitude of the current position
-     * @param longitude of the current position
-     * @param distance to the current position in meters
-     * @return all positions in the range of the distance around the current position
-     */
-    public Object getAllPositionsInRange(Double latitude, Double longitude, Integer distance) {
-        DecimalFormat df = new DecimalFormat("####.######");
-        String lat = df.format(latitude);
-        String lon = df.format(longitude);
-        String dist = distance.toString();
-
-        try {
-            String data = URLEncoder.encode("method", "UTF-8") + "=" + URLEncoder.encode("getAllPositionsInRange", "UTF-8");
-            data += "&" + URLEncoder.encode("latitude", "UTF-8") + "=" + URLEncoder.encode(lat, "UTF-8");
-            data += "&" + URLEncoder.encode("longitude", "UTF-8") + "=" + URLEncoder.encode(lon, "UTF-8");
-            data += "&" + URLEncoder.encode("distance", "UTF-8") + "=" + URLEncoder.encode(dist, "UTF-8");
-
-            return execute(data);
-        } catch (Exception e) {
-            return new String("Exception: " + e.getMessage());
-        }
-    }
-
-    /**
-     *
      * @param latitude of the current position
      * @param longitude of the current position
      * @param distance to the current position in meters
@@ -169,34 +87,6 @@ public class DatabaseActivity extends AsyncTask<Object, Object, Object> {
             return new String("Exception: " + e.getMessage());
         }
     }
-
-    /**
-     *
-     * @param positions that are searched for
-     * @return records for all mentioned positions
-     */
-    public Object getRecordsForPositions(List<Integer> positions) {
-        String formattedPositions = formatPositions(positions);
-
-        try {
-            String data = URLEncoder.encode("method", "UTF-8") + "=" + URLEncoder.encode("getRecordsForPositions", "UTF-8");
-            data += "&" + URLEncoder.encode("positions", "UTF-8") + "=" + URLEncoder.encode(formattedPositions, "UTF-8");
-
-            return execute(data);
-        } catch (Exception e) {
-            return new String("Exception: " + e.getMessage());
-        }
-    }
-
-    private String formatPositions(List<Integer> positions) {
-        String result = positions.toString();
-        result = result.replace("[", "(");
-        result = result.replace("]", ")");
-
-        return result;
-    }
-
-    // TODO for the following function no return (should doInBackground be adapted?)
 
     /**
      *
@@ -257,29 +147,4 @@ public class DatabaseActivity extends AsyncTask<Object, Object, Object> {
             //return new String("Exception: " + e.getMessage());
         }
     }
-
-    /*public Object getUserById(String id) {
-        try {
-            String data = URLEncoder.encode("method", "UTF-8") + "=" + URLEncoder.encode("getUserByAndroidId", "UTF-8");
-            data += "&" + URLEncoder.encode("id", "UTF-8") + "=" + URLEncoder.encode(id, "UTF-8");
-
-            return execute(data);
-        } catch (Exception e) {
-            return new String("Exception: " + e.getMessage());
-        }
-    }*/
-
-    /*
-
-    User posts something:
-    - check if android id is already in database and get user id for it         DONE
-    - check if position is already in database and get position id for it       DONE
-    - create new record using user id and position id                           DONE
-    - increase upvotes and downvotes                                            DONE
-
-    User wants to see and play records around him:
-    - get all position ids from db in a specific range                          DONE
-    - get all records for position ids                                          DONE
-
-     */
 }
